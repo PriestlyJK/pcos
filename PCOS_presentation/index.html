@@ -1,0 +1,1232 @@
+<!doctype html>
+<html lang="uk">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width,initial-scale=1,viewport-fit=cover">
+<title>СПКЯ та безпліддя</title>
+<meta name="claude:viewport-fit-sides" content="cover">
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Source+Sans+3:ital,wght@0,400;0,600;0,700;1,400&family=Source+Serif+4:ital,opsz,wght@0,8..60,400;0,8..60,600;1,8..60,400&display=swap">
+<style>
+/* Layout: 1600×900 stage. Left: 900×600 scene (illustrations, flows, callouts) above a hormone strip that explains every change. Right: chapter, title and scientific prose with a transition to the next step. Journal-like typography; one dark ground so renders read well over screen share. */
+:root{
+  --bg:#0D0C12; --stage:#121119; --card:#1A1824; --line:#2C2938;
+  --fg:#EDEAF2; --text:#DCD7E4; --muted:#A39DB1; --dim:#6F6A7E;
+  --accent:#E07A8F;
+  --fsh:#4FC9BB; --lh:#A58BF0; --e2:#E9B84F; --andro:#EE7E4F; --ins:#5F9BEF; --amh:#E283B9;
+  --warn:#E85D6A; --ok:#6FCF97; --ice:#8FD6F0;
+  --serif:"Source Serif 4", Georgia, "Times New Roman", serif;
+  --sans:"Source Sans 3", "Segoe UI", system-ui, -apple-system, sans-serif;
+  color-scheme:dark;
+}
+html,body{height:100%}
+body{margin:0;background:var(--bg);color:var(--fg);font-family:var(--sans);overflow:hidden;box-sizing:border-box;
+  padding-left:max(16px,env(safe-area-inset-left,0px));padding-right:max(16px,env(safe-area-inset-right,0px));padding-block:0}
+.vp{position:relative;height:100%;width:100%}
+.stage{position:absolute;left:50%;top:50%;width:1600px;height:900px;transform-origin:50% 50%;background:var(--stage);border-radius:14px;overflow:hidden;box-shadow:0 0 0 1px var(--line)}
+
+/* header: section label + slide thesis */
+.hdr{position:absolute;left:24px;right:24px;top:0;height:96px;display:flex;flex-direction:column;justify-content:center;border-bottom:1px solid var(--line)}
+.hsec{font:600 14px/1.2 var(--sans);color:var(--accent)}
+.htitle{font:600 30px/1.15 var(--serif);margin-top:6px;color:var(--fg);text-wrap:balance}
+/* scene */
+.scene{position:absolute;left:24px;top:108px;width:900px;height:600px;border-radius:10px;overflow:hidden;background:#0F0E15}
+.view{position:absolute;inset:0;opacity:0;transition:opacity .9s ease,transform 1.1s cubic-bezier(.5,0,.2,1);pointer-events:none}
+.view.on{opacity:1}
+.im{position:absolute;display:block;transition:opacity 1.2s ease,transform 1.4s cubic-bezier(.45,0,.2,1)}
+.im.off{opacity:0}
+#fx{position:absolute;left:0;top:0;width:900px;height:600px;pointer-events:none}
+#co{position:absolute;left:0;top:0;width:900px;height:600px;pointer-events:none;overflow:visible}
+#labels{position:absolute;inset:0;pointer-events:none}
+#ovwrap{position:absolute;inset:0;transform-origin:531px 370px;transition:transform 1.6s cubic-bezier(.45,0,.2,1)}
+#aglow{position:absolute;left:330px;top:250px;width:400px;height:240px;border-radius:50%;background:radial-gradient(closest-side,rgba(238,126,79,.6),rgba(238,126,79,0));mix-blend-mode:screen;opacity:0;transition:opacity 1.2s}
+.fl{position:absolute;left:0;top:0;width:100px;height:100px;transition:transform 1.5s cubic-bezier(.45,0,.2,1),opacity .9s}
+.fl img{position:absolute;inset:0;width:100%;height:100%;opacity:0;transition:opacity .9s}
+.fl[data-s="a"] .a,.fl[data-s="g"] .g,.fl[data-s="o"] .o,.fl[data-s="c"] .c,.fl[data-s="t"] .t{opacity:1}
+#scope{transition:transform 1.3s cubic-bezier(.45,0,.2,1)}
+.burn{position:absolute;width:56px;height:56px;margin:-28px 0 0 -28px;opacity:0;transform:scale(.4);transition:opacity .4s,transform .4s}
+.burn.on{opacity:1;transform:none}
+
+/* callouts: thin line, small dot, plain label */
+.lbl{position:absolute;max-width:240px;padding:5px 9px;border-radius:6px;background:rgba(13,12,18,.86);
+  font:600 15px/1.25 var(--sans);color:var(--fg);opacity:0;transition:opacity .5s;white-space:normal;border-left:3px solid var(--c,#fff)}
+.lbl small{display:block;font:400 13px/1.3 var(--sans);color:var(--muted);margin-top:1px}
+.lbl.on{opacity:1}
+.lbl.tag{border-left:none;border-radius:6px;background:rgba(13,12,18,.86);color:var(--c);font-weight:700}
+#co line{stroke-width:1.4;stroke-dasharray:400;stroke-dashoffset:400;transition:stroke-dashoffset .7s ease}
+#co line.on{stroke-dashoffset:0}
+.src-note{position:absolute;right:8px;bottom:6px;font:400 11.5px/1.3 var(--sans);color:var(--muted);background:rgba(13,12,18,.82);padding:4px 7px;border-radius:5px;max-width:420px;text-align:right}
+
+/* drug / instrument card */
+.drug{position:absolute;display:flex;gap:16px;align-items:center;padding:14px 18px 14px 14px;width:400px;box-sizing:border-box;background:rgba(22,20,31,.95);border:1px solid var(--line);border-left:4px solid var(--dc);border-radius:10px;
+  opacity:0;transform:translateY(10px);transition:opacity .6s,transform .6s;z-index:4}
+.drug.on{opacity:1;transform:none}
+.drug img{width:150px;height:112px;object-fit:contain;flex:none}
+.drug .dn{font:600 26px/1.1 var(--serif)}
+.drug .dg{font:400 15px/1.3 var(--sans);color:var(--muted);margin-top:3px}
+.drug .dl{font:400 14.5px/1.4 var(--sans);color:var(--text);margin-top:8px}
+.drug .dl b{color:var(--fg);font-weight:600}
+
+/* patient */
+.pt-photo{position:absolute;left:40px;top:60px;width:330px;height:330px;border-radius:50%;overflow:hidden;background:#24203A}
+.pt-photo img{width:100%;height:100%;object-fit:cover;object-position:50% 15%}
+.pt-facts{position:absolute;left:410px;right:30px;top:70px;display:grid;grid-template-columns:1fr 1fr;gap:12px}
+.pt-facts div{padding:14px 16px;background:var(--card);border-radius:8px}
+.pt-facts b{display:block;font:600 30px/1.05 var(--serif)}
+.pt-facts span{display:block;margin-top:5px;font:400 15px/1.3 var(--sans);color:var(--muted)}
+.pt-q{position:absolute;left:40px;right:30px;bottom:40px;padding:16px 20px;background:var(--card);border-radius:8px;font:400 italic 21px/1.4 var(--serif);color:var(--text)}
+
+/* rotterdam */
+.rott{position:absolute;left:16px;right:16px;bottom:14px;display:flex;gap:10px}
+.crit{flex:1;padding:10px 12px;display:flex;gap:10px;align-items:flex-start;background:rgba(22,20,31,.94);border-radius:8px;opacity:.4;transition:opacity .5s}
+.crit.on{opacity:1}
+.ck{flex:none;width:24px;height:24px;border-radius:50%;display:grid;place-items:center;background:#2A2638;color:var(--muted);font:700 14px/1 var(--sans);font-style:normal}
+.crit.on .ck{background:var(--ok);color:#0F2A1A}
+.crit.q.on .ck{background:#3A3550;color:var(--fg)}
+.crit b{display:block;font:600 15px/1.2 var(--sans)}
+.crit span{display:block;margin-top:2px;font:400 13px/1.3 var(--sans);color:var(--muted)}
+.counter{position:absolute;right:16px;top:16px;padding:10px 14px;background:rgba(22,20,31,.94);border-radius:8px;text-align:right}
+.counter b{display:block;font:600 46px/1 var(--serif);color:var(--ok);font-variant-numeric:tabular-nums}
+.counter span{font:400 13px/1.3 var(--sans);color:var(--muted)}
+.placeholder{position:absolute;display:grid;place-items:center;text-align:center;background:#16141F;border:1px dashed #3A3550;border-radius:8px;color:var(--muted);font:400 15px/1.45 var(--sans);padding:20px;box-sizing:border-box}
+
+/* chain diagram */
+#chain text{font-family:var(--sans)}
+.cn rect{fill:#1C1A27;stroke:#3A3550;stroke-width:1.5;transition:fill .5s,stroke .5s}
+.cn text{fill:var(--fg);font-size:15.5px;font-weight:600}
+.cn.hot rect{fill:#2B1E2A;stroke:var(--accent)}
+.ce{fill:none;stroke:#5A546C;stroke-width:2;marker-end:url(#arr)}
+.ce.hot{stroke:var(--accent)}
+.ce.dash{stroke-dasharray:6 6}
+.cl{font-size:12.5px;fill:var(--muted)}
+.tx{opacity:0;transition:opacity .6s}
+.tx.on{opacity:1}
+.tx rect{rx:6;fill:var(--tc);opacity:.16}
+.tx .tb{fill:var(--tc);font-size:13.5px;font-weight:700}
+.tx circle{fill:var(--tc)}
+
+/* data views */
+.cmp{position:absolute;left:30px;right:30px;top:40px;display:flex;flex-direction:column;gap:22px}
+.cmp h3{margin:0;font:600 18px/1.3 var(--sans);color:var(--muted)}
+.cmp-cols{display:flex;gap:30px}
+.ccol{flex:1;display:flex;gap:20px;align-items:center}
+.ccol h4{margin:0 0 4px;font:600 22px/1.1 var(--serif)}
+.ccol .big{font:600 50px/1 var(--serif);font-variant-numeric:tabular-nums}
+.ccol small{display:block;font:400 14px/1.3 var(--sans);color:var(--muted)}
+.dots{display:grid;grid-template-columns:repeat(10,12px);gap:5px;flex:none}
+.dots i{width:12px;height:12px;border-radius:50%;background:#2A2638;transition:background .35s}
+.let .dots i.on{background:var(--fsh)} .let .big{color:var(--fsh)}
+.clo .dots i.on{background:var(--lh)} .clo .big{color:var(--lh)}
+.bars{display:flex;flex-direction:column;gap:16px}
+.brow{display:grid;grid-template-columns:210px 1fr;gap:16px;align-items:center}
+.brow > span{font:600 16px/1.3 var(--sans)}
+.brow > span em{font-style:normal;font-weight:400;color:var(--muted);font-size:13.5px;display:block}
+.pair{display:flex;flex-direction:column;gap:5px}
+.bar{height:20px;border-radius:4px;background:#221F2E;position:relative;overflow:hidden}
+.bar i{position:absolute;left:0;top:0;bottom:0;width:0;border-radius:4px;transition:width 1.2s cubic-bezier(.3,0,.2,1)}
+.bar b{position:absolute;right:8px;top:50%;transform:translateY(-50%);font:600 13px/1 var(--sans)}
+.legend{display:flex;gap:20px;font:400 14px/1 var(--sans);color:var(--muted);flex-wrap:wrap}
+.legend i{display:inline-block;width:12px;height:12px;border-radius:3px;margin-right:7px;vertical-align:-1px}
+.fork .root{position:absolute;left:50%;top:40px;transform:translateX(-50%);padding:14px 22px;font:600 21px/1.25 var(--serif);text-align:center;background:var(--card);border-radius:8px;border-top:3px solid var(--warn);white-space:nowrap}
+.fork .root small{display:block;font:400 14px/1.3 var(--sans);color:var(--muted);margin-top:4px}
+.fork .br{position:absolute;top:270px;width:390px;padding:16px;box-sizing:border-box;background:var(--card);border-radius:8px;display:flex;flex-direction:column;gap:6px}
+.fork .br img{width:100%;height:150px;object-fit:contain}
+.fork .br.l{left:24px;border-top:3px solid var(--fsh)}.fork .br.r{right:24px;border-top:3px solid var(--andro)}
+.fork .br b{font:600 21px/1.2 var(--serif)}
+.fork .br span{font:400 14.5px/1.45 var(--sans);color:var(--muted)}
+.fork svg{position:absolute;inset:0}
+.micro{position:absolute;top:300px;width:200px;text-align:center;opacity:.25;transition:opacity .6s}
+.micro.on{opacity:1}
+.micro img{width:190px;height:190px;object-fit:cover;border-radius:50%}
+.micro b{display:block;margin-top:8px;font:600 16px/1.25 var(--sans)}
+.micro span{display:block;font:400 13px/1.3 var(--sans);color:var(--muted);margin-top:2px}
+.risks{position:absolute;left:560px;right:16px;top:40px;display:flex;flex-direction:column;gap:9px}
+.risk{padding:10px 14px;background:var(--card);border-radius:8px;border-left:3px solid var(--warn);font:600 16px/1.25 var(--sans);opacity:0;transform:translateX(14px);transition:opacity .5s,transform .5s}
+.risk.on{opacity:1;transform:none}
+.risk.calm{font-weight:400;color:var(--muted);border-left-color:var(--ok)}
+.src{position:absolute;left:30px;right:30px;top:30px;display:flex;flex-direction:column;gap:12px}
+.src div{padding:14px 18px;background:var(--card);border-radius:8px;font:400 15.5px/1.5 var(--sans)}
+.src div span{display:block;font:600 12.5px/1 var(--sans);color:var(--muted);margin-bottom:6px;letter-spacing:.04em}
+
+/* hormone strip */
+.hs{position:absolute;left:24px;top:718px;width:900px;height:122px;background:var(--card);border-radius:10px;display:grid;grid-template-columns:540px 1fr;transition:opacity .5s}
+.hs.off{opacity:0}
+.hs-l{padding:10px 16px;border-right:1px solid var(--line)}
+.hs-t{font:600 15px/1.2 var(--sans);color:var(--fg)}
+.hs-t small{font:400 13px/1.3 var(--sans);color:var(--muted);margin-left:8px}
+.hgrid{display:grid;grid-template-columns:1fr 1fr;gap:9px 24px;margin-top:10px}
+.hrow{display:grid;grid-template-columns:96px 1fr 40px;align-items:center;gap:8px}
+.hn{font:600 14.5px/1 var(--sans);display:flex;align-items:center;gap:7px;white-space:nowrap}
+.hn i{width:9px;height:9px;border-radius:50%;background:var(--c)}
+.htr{height:13px;border-radius:5px;background:#100F17;position:relative;overflow:hidden}
+.htr .nb{position:absolute;left:30%;width:32%;top:0;bottom:0;background:rgba(255,255,255,.14);border-left:1px solid rgba(255,255,255,.35);border-right:1px solid rgba(255,255,255,.35);z-index:1}
+.htr .hf{position:absolute;left:0;top:0;bottom:0;width:40%;border-radius:5px;background:var(--c);transition:width 1.1s cubic-bezier(.3,0,.2,1)}
+.hrow.chg .hn{color:var(--c)}
+.hv{font:600 13px/1 var(--sans);text-align:right;color:var(--muted)}
+.hv.hi{color:var(--andro)} .hv.lo{color:var(--fsh)}
+.hs-r{padding:10px 16px;overflow:hidden}
+.why{margin-top:6px;display:flex;flex-direction:column;gap:3px}
+.why div{font:400 13.5px/1.26 var(--sans);color:var(--text);opacity:0;transform:translateY(4px);transition:opacity .5s,transform .5s}
+.why div.on{opacity:1;transform:none}
+.why b{color:var(--c);font-weight:700}
+.why .none{color:var(--muted);font-style:italic}
+
+/* right column: open typography, no boxes */
+.col{position:absolute;left:948px;top:108px;width:628px;height:732px}
+.rc{height:calc(100% - 70px);display:flex;flex-direction:column;justify-content:center;gap:20px;transition:opacity .3s}
+.rc.swap{opacity:0}
+.rc > *{opacity:0;transform:translateY(8px);transition:opacity .5s,transform .5s}
+.rc > *.on{opacity:1;transform:none}
+#abbr{position:absolute;left:0;right:0;bottom:0;font:400 13.5px/1.45 var(--sans);color:var(--muted);transition:opacity .4s}
+#abbr b{color:var(--text);font-weight:700}
+.r-lead{font:600 26px/1.35 var(--serif);color:var(--fg)}
+.r-p{font:400 19px/1.58 var(--serif);color:var(--text)}
+.r-q{font:400 italic 21px/1.45 var(--serif);color:var(--fg)}
+.r-q::before{content:"";display:block;width:40px;height:3px;background:var(--accent);margin-bottom:12px}
+.r-foot{font:400 italic 18px/1.5 var(--serif);color:var(--muted)}
+.r-rec{font:400 17.5px/1.5 var(--sans);color:var(--text)}
+.r-rec b{display:block;font:700 13.5px/1.2 var(--sans);color:var(--ok);margin-bottom:4px}
+.r-steps{display:flex;flex-direction:column;gap:18px}
+.r-steps .st{display:grid;grid-template-columns:46px 1fr;gap:10px;align-items:start}
+.r-steps .nm{font:600 36px/1 var(--serif);color:var(--accent)}
+.r-steps h5{margin:2px 0 0;font:700 19px/1.25 var(--sans);color:var(--fg)}
+.r-steps p{margin:4px 0 0;font:400 18px/1.45 var(--serif);color:var(--text)}
+.r-tab{width:100%;border-collapse:separate;border-spacing:0 14px;font:400 17.5px/1.4 var(--serif);color:var(--text);margin:-14px 0}
+.r-tab th{font:700 15px/1.2 var(--sans);text-align:left;padding:0 14px 0 0;color:var(--muted)}
+.r-tab th.c1{color:var(--fsh)} .r-tab th.c2{color:var(--accent)}
+.r-tab td{padding:0 14px 0 0;vertical-align:top}
+.r-tab td:first-child{font:700 14.5px/1.35 var(--sans);color:var(--muted);width:150px;padding-top:3px}
+.r-tab .y{color:var(--ok);font-weight:600}.r-tab .n{color:var(--muted);font-style:italic}
+.r-flow{display:flex;flex-direction:column;gap:2px}
+.r-flow .fn b{display:block;font:600 22px/1.3 var(--serif);color:var(--fc)}
+.r-flow .fn span{display:block;margin-top:2px;font:400 17px/1.4 var(--serif);color:var(--text)}
+.r-flow .fa{height:30px;display:flex;align-items:center;color:var(--dim);font:400 22px/1 var(--sans)}
+.r-fig .big{font:600 60px/1.05 var(--serif);color:var(--accent);letter-spacing:-.01em}
+.r-fig .cap{margin-top:6px;font:400 18px/1.3 var(--sans);color:var(--muted)}
+.r-chain{font:600 19px/1.6 var(--serif);color:var(--fg)}
+.r-chain i{font-style:normal;color:var(--accent);margin:0 8px}
+.r-two{display:grid;grid-template-columns:1fr 1fr;gap:28px}
+.r-two h5{margin:0;font:700 19px/1.25 var(--sans);color:var(--tc)}
+.r-two em{display:block;margin-top:2px;font:400 italic 16px/1.2 var(--serif);color:var(--muted)}
+.r-two p{margin:8px 0 0;font:400 17.5px/1.5 var(--serif);color:var(--text)}
+.r-two ul{margin:10px 0 0;padding:0;list-style:none;display:flex;flex-direction:column;gap:9px}
+.r-two li{font:400 18px/1.35 var(--serif);color:var(--text);padding-left:22px;position:relative}
+.r-two li::before{content:var(--mk);position:absolute;left:0;top:0;font:700 18px/1.35 var(--sans);color:var(--tc)}
+.r-prof{display:flex;flex-direction:column;gap:14px;margin:0}
+.r-prof div{display:grid;grid-template-columns:170px 1fr;gap:16px}
+.r-prof dt{font:700 14.5px/1.4 var(--sans);color:var(--muted);padding-top:2px}
+.r-prof dd{margin:0;font:400 19px/1.4 var(--serif);color:var(--fg)}
+.r-stats{display:grid;grid-template-columns:1fr 1fr;gap:22px 28px}
+.r-stats b{font:600 44px/1 var(--serif);color:var(--ice)}
+.r-stats i{font-style:normal;font:400 17px/1 var(--sans);color:var(--muted);margin-left:8px}
+.r-stats span{display:block;margin-top:6px;font:600 16px/1.2 var(--sans);color:var(--text)}
+.r-stats .bad b{color:var(--warn)}
+
+/* animated circle (wide slides) */
+#wide{position:absolute;left:24px;top:108px;width:1552px;height:732px;display:none}
+#wide.on{display:block}
+#cw{position:absolute;left:0;top:0;width:1000px;height:732px;overflow:visible}
+#cwfx{position:absolute;left:0;top:0;width:1000px;height:732px;pointer-events:none}
+.ce2{fill:none;stroke-width:2.5;stroke-linecap:round;transition:stroke-dashoffset 1s ease,opacity .5s,stroke .5s}
+.cnode{position:absolute;width:230px;margin-left:-115px;margin-top:-58px;display:flex;flex-direction:column;align-items:center;text-align:center;gap:8px;opacity:0;transform:scale(.85);transition:opacity .5s,transform .5s}
+.cnode.on{opacity:1;transform:none}
+.cnode img{width:116px;height:116px;border-radius:50%;object-fit:cover;border:3px solid #3A3550;transition:border-color .5s,box-shadow .5s}
+.cnode.hot img{border-color:var(--accent);box-shadow:0 0 0 7px rgba(224,122,143,.2),0 0 30px rgba(224,122,143,.35)}
+.cnode.win img{border-color:var(--ok);box-shadow:0 0 0 7px rgba(111,207,151,.2)}
+.cnode span{font:600 16px/1.25 var(--sans);color:var(--fg);text-shadow:0 1px 6px #000}
+.cnode.win span{color:var(--ok)}
+.cnode.sr{width:auto;flex-direction:row;margin-left:-58px;text-align:left;gap:12px}
+.cnode.sl{width:auto;flex-direction:row-reverse;margin-left:-270px;text-align:right;gap:12px}
+.cnode.sr span,.cnode.sl span{width:200px}
+.cmark{position:absolute;display:flex;align-items:center;gap:8px;transform:translate(-50%,-50%) scale(.8);opacity:0;transition:opacity .5s,transform .5s;white-space:nowrap}
+.cmark.on{opacity:1;transform:translate(-50%,-50%)}
+.cmark.dim{opacity:.4;transform:translate(-50%,-50%)}
+.cmark img{width:76px;height:56px;object-fit:contain}
+.cmark b{font:700 16px/1.2 var(--sans);color:var(--mc);text-shadow:0 1px 6px #000}
+.cbrk{opacity:0;transition:opacity .4s}
+.cbrk.on{opacity:1}
+#cmid{position:absolute;left:500px;top:345px;transform:translate(-50%,-50%);text-align:center;font:400 italic 22px/1.35 var(--serif);color:var(--muted);opacity:0;transition:opacity .6s;width:240px}
+#cmid.on{opacity:1}
+.cpanel{position:absolute;left:1040px;top:0;width:512px;height:732px;display:flex;flex-direction:column;justify-content:center}
+.cp-dots{display:flex;gap:7px;margin-bottom:26px}
+.cp-dots i{width:26px;height:5px;border-radius:3px;background:#2C2938;transition:background .4s}
+.cp-dots i.on{background:var(--accent)}
+.cp-n{font:600 15px/1.2 var(--sans);color:var(--accent)}
+.cp-t{margin-top:8px;font:600 34px/1.15 var(--serif);color:var(--fg);transition:opacity .3s}
+.cp-p{margin-top:16px;font:400 21px/1.55 var(--serif);color:var(--text);transition:opacity .3s}
+.cp-ab{margin-top:22px;font:400 14px/1.45 var(--sans);color:var(--muted)}
+.cp-ab b{color:var(--text)}
+.cp-hint{margin-top:26px;font:400 15px/1.4 var(--sans);color:var(--dim)}
+.cp-fade{opacity:0}
+
+/* tall scene when the hormone strip is hidden */
+.scene.tall{height:732px}
+.scene.tall .view{top:66px;bottom:auto;height:600px}
+.scene.tall #fx,.scene.tall #co{top:66px}
+.scene.tall #labels{top:66px;bottom:auto;height:600px}
+.scene.tall #v-patient{top:0;height:732px}
+.scene.tall .cal{height:432px}
+.scene.tall #calSvg{top:120px}
+/* clinical case */
+.cc{position:absolute;left:0;top:0;width:900px;height:268px;background:#F4F1EC;border-radius:10px;color:#2A2530;padding:20px 26px;box-sizing:border-box}
+.cc h3{margin:0;font:700 14px/1 var(--sans);letter-spacing:.06em;color:#7A6F82;display:flex;justify-content:space-between}
+.cc-grid{margin-top:14px;display:grid;grid-template-columns:190px 1fr;row-gap:9px;column-gap:16px;border-top:1px solid #D9D2C9;padding-top:14px}
+.cc-grid dt{font:700 15px/1.35 var(--sans);color:#6A6070}
+.cc-grid dd{margin:0;font:400 17px/1.35 var(--serif);color:#211C27}
+.cc-grid dd b{font-weight:600;color:#9A2F45}
+.cal{position:absolute;left:0;top:288px;width:900px;height:312px;background:var(--card);border-radius:10px}
+.cal-t{position:absolute;left:24px;top:16px;font:600 16px/1.2 var(--sans);color:var(--fg)}
+.cal-t small{font:400 14px/1.2 var(--sans);color:var(--muted);margin-left:8px}
+#calSvg{position:absolute;left:0;top:44px}
+.drop{opacity:0;transform-box:fill-box;transform-origin:center;transform:scale(.3);transition:opacity .3s,transform .3s}
+.drop.on{opacity:1;transform:none}
+/* footer */
+.ftr{position:absolute;left:24px;right:24px;bottom:8px;height:40px;display:flex;align-items:center;gap:14px;border-top:1px solid var(--line)}
+.fsrc{flex:1;font:400 13px/1.3 var(--sans);color:var(--muted);white-space:nowrap;overflow:hidden;text-overflow:ellipsis}
+.fmeta{font:400 13px/1 var(--sans);color:var(--muted);white-space:nowrap}
+.fmeta b{color:var(--fg);font-weight:600}
+.nb2{appearance:none;border:1px solid var(--line);background:#1A1824;color:var(--fg);height:28px;min-width:36px;border-radius:6px;font:600 14px/1 var(--sans);cursor:pointer;padding:0 10px}
+.nb2:hover{background:#252231}
+.nb2:focus-visible{outline:2px solid var(--accent);outline-offset:2px}
+
+/* full-screen slides: title, section dividers, closing */
+#full{position:absolute;left:0;top:0;width:1600px;height:850px;z-index:40;background:var(--stage);display:none;overflow:hidden}
+#full.on{display:block}
+.fs{position:absolute;inset:0;display:none}
+.fs.on{display:block}
+.t-img{position:absolute;left:0;top:0;width:980px;height:850px;object-fit:cover;-webkit-mask-image:linear-gradient(90deg,#000 55%,transparent);mask-image:linear-gradient(90deg,#000 55%,transparent)}
+.t-box{position:absolute;left:820px;right:70px;top:0;bottom:0;display:flex;flex-direction:column;justify-content:center}
+.t-kick{font:600 16px/1.3 var(--sans);color:var(--accent)}
+.t-title{margin:18px 0 0;font:600 54px/1.1 var(--serif);color:var(--fg);text-wrap:balance}
+.t-sub{margin-top:18px;font:400 italic 25px/1.4 var(--serif);color:var(--muted)}
+.t-rule{width:72px;height:3px;background:var(--accent);margin:40px 0 28px}
+.t-auth{font:600 26px/1.3 var(--sans);color:var(--fg)}
+.t-meta{margin-top:6px;font:400 19px/1.4 var(--sans);color:var(--muted)}
+.t-year{position:absolute;right:70px;bottom:40px;font:400 18px/1 var(--sans);color:var(--dim)}
+.s-img{position:absolute;right:0;top:0;width:760px;height:850px;object-fit:cover;opacity:.32;-webkit-mask-image:linear-gradient(270deg,#000 40%,transparent);mask-image:linear-gradient(270deg,#000 40%,transparent)}
+.s-box{position:absolute;left:110px;top:0;bottom:0;width:820px;display:flex;flex-direction:column;justify-content:center}
+.s-num{font:600 150px/1 var(--serif);color:var(--accent);opacity:.9}
+.s-title{margin:14px 0 0;font:600 58px/1.1 var(--serif)}
+.s-sub{margin-top:16px;font:400 italic 26px/1.4 var(--serif);color:var(--muted)}
+.s-list{margin-top:44px;display:flex;flex-direction:column;gap:0;border-top:1px solid var(--line);width:560px}
+.s-list div{padding:11px 0;border-bottom:1px solid var(--line);font:400 19px/1.3 var(--sans);color:var(--text);display:flex;gap:18px}
+.s-list div span{color:var(--dim);width:22px}
+.e-box{position:absolute;left:110px;right:110px;top:70px}
+.e-title{font:600 60px/1.1 var(--serif)}
+.e-sub{margin-top:10px;font:400 italic 28px/1.4 var(--serif);color:var(--muted)}
+.e-src{margin-top:50px;display:flex;flex-direction:column;gap:14px}
+.e-src div{padding:14px 18px;background:var(--card);border-radius:8px;font:400 17px/1.5 var(--sans);color:var(--text)}
+.e-src div span{display:block;font:600 13px/1 var(--sans);color:var(--muted);margin-bottom:6px}
+@media (prefers-reduced-motion: reduce){.view,.im,.fl,#ovwrap,#scope,.lbl,.drug,.risk{transition-duration:.01s!important}}
+</style>
+<style>[hidden]{display:none!important}</style>
+</head>
+<body>
+
+
+<div class="vp">
+<div class="stage" id="stage">
+  <header class="hdr"><div class="hsec" id="hsec"></div><div class="htitle" id="htitle"></div></header>
+
+  <div class="scene" id="scene">
+    <div class="view" id="v-hero"><img class="im" src="img/hero_ovary.webp" alt="Яєчник при СПКЯ" style="left:0;top:0;width:900px;height:600px;object-fit:cover"></div>
+
+    <div class="view" id="v-patient">
+      <div class="cc"><h3><span>АМБУЛАТОРНА КАРТКА · ПЕРВИННИЙ ПРИЙОМ</span><span>Гінекологія / репродуктологія</span></h3>
+        <dl class="cc-grid">
+          <dt>Пацієнтка</dt><dd>О., 29 років</dd>
+          <dt>Скарги</dt><dd>відсутність вагітності протягом <b>2 років</b> регулярного статевого життя; рідкісні менструації</dd>
+          <dt>Менструальний цикл</dt><dd>інтервал <b>40–60 днів</b> (олігоменорея)</dd>
+          <dt>Об’єктивно</dt><dd>ІМТ <b>31 кг/м²</b> (ожиріння I ступеня)</dd>
+          <dt>Партнер</dt><dd>спермограма — без патології</dd>
+        </dl></div>
+      <div class="cal"><div class="cal-t">Менструальний календар за рік<small>● менструація &nbsp; ◆ овуляція</small></div><svg id="calSvg" width="900" height="268" viewBox="0 0 900 268"></svg></div>
+    </div>
+
+    <div class="view" id="v-us">
+      <img class="im" id="usPcos" alt="УЗД із 3D-підрахунком фолікулів при СПКЯ" style="left:0;top:0;width:660px;height:453px;object-fit:contain;border-radius:8px">
+      <div class="placeholder" id="usPcosPh" style="left:150px;top:20px;width:600px;height:420px">Тут буде реальний знімок УЗД полікістозного яєчника<br>(Wikimedia Commons, відкрита ліцензія)</div>
+      <div class="counter"><b id="fcount">0</b><span>фолікулів, підрахованих<br>в одному яєчнику</span></div>
+      <div class="rott">
+        <div class="crit" data-c="0"><i class="ck">✓</i><div><b>Оліго-/ановуляція</b><span>цикл 40–60 днів</span></div></div>
+        <div class="crit q" data-c="1"><i class="ck">?</i><div><b>Гіперандрогенія</b><span>клінічна або біохімічна</span></div></div>
+        <div class="crit" data-c="2"><i class="ck">✓</i><div><b>ПКМЯ</b><span>≥20 фолікулів або ↑АМГ</span></div></div>
+      </div>
+      <div class="src-note" id="usPcosSrc" style="bottom:auto;top:150px;left:auto;right:16px;text-align:right;max-width:200px"></div>
+    </div>
+
+    <div class="view" id="v-ov">
+      <img class="im" src="img/axis_hypothalamus_pituitary.webp" alt="Гіпоталамус і гіпофіз" style="left:4px;top:2px;width:190px;height:190px">
+      <img class="im" src="img/pancreas.webp" alt="Підшлункова залоза" style="left:2px;top:470px;width:180px;height:120px">
+      <img class="im" data-k="ut" src="img/uterus_coronal.webp" alt="Матка" style="left:700px;top:4px;width:196px;height:131px">
+      <div id="ovwrap">
+        <img class="im" data-k="ovn" src="img/ovary_section_base.webp" alt="Яєчник у розрізі" style="left:200px;top:140px;width:690px;height:460px">
+        <img class="im off" data-k="ovp" src="img/ovary_section_pcos_base.webp" alt="" style="left:200px;top:140px;width:690px;height:460px">
+        <div id="aglow"></div>
+        <div id="fols"></div>
+      </div>
+      <div id="usDomBox" style="position:absolute;left:720px;top:420px;width:170px;height:170px;opacity:0;transition:opacity .6s"><img id="usDom" alt="УЗД: домінантний фолікул" style="width:170px;height:170px;object-fit:cover;border-radius:8px"></div>
+      <div class="src-note" id="usDomSrc" style="opacity:0"></div>
+    </div>
+
+    <div class="view" id="v-gnrh"><img class="im" src="img/zoom_gnrh_neurons.webp" alt="ГнРГ-нейрони" style="left:0;top:0;width:900px;height:600px">
+      <div style="position:absolute;right:12px;bottom:12px;width:330px;padding:10px 12px;background:rgba(22,20,31,.94);border-radius:8px">
+        <div style="font:600 14px/1.2 var(--sans)" id="pulseCap">Пульсограма ГнРГ</div><canvas id="pulseCv" width="620" height="130" style="width:306px;height:64px;display:block;margin-top:6px"></canvas></div></div>
+    <div class="view" id="v-gonad">
+      <img class="im" data-k="n" src="img/zoom_gonadotroph.webp" alt="Гонадотроф" style="left:150px;top:0;width:600px;height:600px">
+      <img class="im off" data-k="b" src="img/zoom_gonadotroph_blocked.webp" alt="" style="left:150px;top:0;width:600px;height:600px"></div>
+    <div class="view" id="v-cell2">
+      <img class="im" data-k="n" src="img/zoom_two_cell.webp" alt="Тека і гранульоза" style="left:0;top:0;width:900px;height:600px">
+      <img class="im off" data-k="p" src="img/zoom_theca_overdrive.webp" alt="" style="left:0;top:0;width:900px;height:600px"></div>
+    <div class="view" id="v-ins"><img class="im" src="img/zoom_insulin_receptor.webp" alt="Рецептор інсуліну" style="left:0;top:0;width:900px;height:600px"></div>
+    <div class="view" id="v-shbg"><img class="im" src="img/zoom_blood_shbg.webp" alt="Кров: ГЗСГ" style="left:0;top:0;width:900px;height:600px"></div>
+    <div class="view" id="v-adip">
+      <img class="im" data-k="n" src="img/zoom_adipose.webp" alt="Вісцеральна жирова тканина" style="left:0;top:0;width:900px;height:600px">
+      <img class="im off" data-k="a" src="img/zoom_adipose_after.webp" alt="" style="left:0;top:0;width:900px;height:600px"></div>
+    <div class="view" id="v-liver"><img class="im" src="img/zoom_liver_hepatocyte.webp" alt="Печінкова часточка" style="left:0;top:0;width:900px;height:600px"></div>
+    <div class="view" id="v-arom"><img class="im" src="img/granulosa_aromatase.webp" alt="Ароматаза" style="left:0;top:0;width:900px;height:600px"></div>
+    <div class="view" id="v-er">
+      <img class="im" data-k="n" src="img/zoom_estrogen_receptor.webp" alt="Рецептор естрогену" style="left:150px;top:0;width:600px;height:600px">
+      <img class="im off" data-k="c" src="img/zoom_receptor_occupied_clomiphene.webp" alt="" style="left:150px;top:0;width:600px;height:600px"></div>
+    <div class="view" id="v-clp">
+      <img class="im" data-k="en" src="img/zoom_endometrium_thick.webp" alt="Ендометрій" style="left:0;top:60px;width:510px;height:340px">
+      <img class="im off" data-k="et" src="img/zoom_endometrium_thin.webp" alt="" style="left:0;top:60px;width:510px;height:340px">
+      <img class="im" data-k="mf" src="img/zoom_mucus_fertile.webp" alt="Цервікальний слиз" style="left:530px;top:50px;width:360px;height:360px">
+      <img class="im off" data-k="mh" src="img/zoom_mucus_hostile.webp" alt="" style="left:530px;top:50px;width:360px;height:360px"></div>
+    <div class="view" id="v-drill">
+      <img class="im" src="img/ovary_external_pcos.webp" alt="Яєчник при СПКЯ" style="left:0;top:40px;width:780px;height:520px">
+      <div id="burns">
+        <img class="burn" src="img/burn_mark.webp" alt="" style="left:180px;top:250px">
+        <img class="burn" src="img/burn_mark.webp" alt="" style="left:300px;top:200px">
+        <img class="burn" src="img/burn_mark.webp" alt="" style="left:390px;top:290px">
+        <img class="burn" src="img/burn_mark.webp" alt="" style="left:250px;top:370px">
+      </div>
+      <img id="scope" class="im" src="img/laparoscope_needle.webp" alt="Лапароскопічний електрод" style="left:166px;top:-142px;width:600px;height:400px;transform:translate(500px,-400px)"></div>
+    <div class="view" id="v-hyper">
+      <img class="im" src="img/ovary_hyperstimulated.webp" alt="Гіперстимульований яєчник" style="left:30px;top:10px;width:840px;height:560px"></div>
+    <div class="view" id="v-vegf">
+      <img class="im" data-k="n" src="img/zoom_vegf_capillary.webp" alt="VEGF і капіляр" style="left:0;top:0;width:900px;height:600px">
+      <img class="im off" data-k="l" src="img/zoom_capillary_leak.webp" alt="" style="left:0;top:0;width:900px;height:600px"></div>
+    <div class="view" id="v-ohss"><img class="im" src="img/ohss_abdomen.webp" alt="СГЯ" style="left:0;top:0;width:900px;height:600px"></div>
+    <div class="view" id="v-clreg"><img class="im" src="img/zoom_corpus_luteum_regress.webp" alt="Жовте тіло" style="left:0;top:0;width:900px;height:600px">
+      <div style="position:absolute;left:12px;bottom:12px;width:370px;padding:10px 12px;background:rgba(22,20,31,.94);border-radius:8px">
+        <div style="font:600 14px/1.2 var(--sans)">Тривалість лютеотропного сигналу</div>
+        <svg viewBox="0 0 350 120" width="346" height="118"><line x1="10" y1="104" x2="340" y2="104" stroke="#3A3550"/>
+          <path id="hcgC" d="M10 104 C30 20 60 20 100 40 S210 86 340 98" fill="none" stroke="var(--warn)" stroke-width="3" stroke-dasharray="520" stroke-dashoffset="520" style="transition:stroke-dashoffset 2.6s ease"/>
+          <path id="agoC" d="M10 104 C25 28 45 28 65 76 S100 104 130 104 L340 104" fill="none" stroke="var(--lh)" stroke-width="3" stroke-dasharray="520" stroke-dashoffset="520" style="transition:stroke-dashoffset 2.6s ease .6s"/>
+          <text x="112" y="32" style="font:600 13px var(--sans);fill:var(--warn)">ХГЛ: кілька днів</text>
+          <text x="72" y="70" style="font:600 13px var(--sans);fill:var(--lh)">агоніст ГнРГ: ~1 доба</text>
+          <text x="300" y="118" style="font:400 12px var(--sans);fill:var(--muted)">час →</text></svg></div></div>
+    <div class="view" id="v-lab">
+      <img class="im" src="img/ivf_aspiration_us_view.webp" alt="Трансвагінальна пункція" style="left:0;top:10px;width:420px;height:280px">
+      <img class="im" src="img/vitrification_device.webp" alt="Вітрифікація" style="left:470px;top:10px;width:420px;height:280px">
+      <div class="micro" style="left:30px" data-m="0"><img id="mZyg" alt="Зигота 2PN"><b>Зигота 2PN</b><span>доба 1 · два пронуклеуси</span></div>
+      <div class="micro" style="left:350px" data-m="1"><img id="mBlast" alt="Бластоциста"><b>Бластоциста</b><span>доба 5–6</span></div>
+      <div class="micro" style="left:670px" data-m="2"><img src="img/blastocyst_frozen.webp" alt="Вітрифікація" style="filter:saturate(.9)"><b>Вітрифікація</b><span>freeze-all</span></div>
+      <div class="src-note" id="labSrc"></div></div>
+    <div class="view" id="v-transfer">
+      <img class="im" data-k="t" src="img/embryo_transfer.webp" alt="Перенесення ембріона" style="left:0;top:110px;width:540px;height:360px">
+      <img class="im off" data-k="i" src="img/uterus_implantation.webp" alt="" style="left:0;top:110px;width:540px;height:360px">
+      <div class="risks" id="risks">
+        <div class="risk">Гестаційний діабет</div><div class="risk">Гіпертензивні розлади, прееклампсія</div><div class="risk">Передчасні пологи</div>
+        <div class="risk">Затримка росту плода</div><div class="risk">Викидень, кесарів розтин</div><div class="risk calm">ДРТ не додає ризику понад сам СПКЯ</div></div></div>
+
+    <div class="view" id="v-chain">
+      <svg id="chain" viewBox="0 0 900 600" width="900" height="600">
+        <defs><marker id="arr" viewBox="0 0 10 10" refX="9" refY="5" markerWidth="7" markerHeight="7" orient="auto-start-reverse"><path d="M0 0 L10 5 L0 10z" fill="#8A84A0"/></marker></defs>
+        <g id="edges"></g><g id="nodes"></g><g id="txs"></g>
+      </svg>
+    </div>
+
+    <div class="view" id="v-legro"><div class="cmp">
+      <h3>PPCOS II · Legro et al., NEJM 2014 · 750 жінок із СПКЯ · до 5 циклів</h3>
+      <div class="cmp-cols">
+        <div class="ccol let"><div class="dots" id="dL"></div><div><h4>Летрозол</h4><div class="big">27,5%</div><small>кумулятивне живонародження</small></div></div>
+        <div class="ccol clo"><div class="dots" id="dC"></div><div><h4>Кломіфен</h4><div class="big">19,1%</div><small>кумулятивне живонародження</small></div></div>
+      </div>
+      <div class="bars" id="lgBars">
+        <div class="brow"><span>Овуляція<em>частка циклів</em></span><div class="pair"><div class="bar"><i style="background:var(--fsh)" data-w="61.7"></i><b>61,7%</b></div><div class="bar"><i style="background:var(--lh)" data-w="48.3"></i><b>48,3%</b></div></div></div>
+        <div class="brow"><span>Двійні<em>різниця статистично незначуща</em></span><div class="pair"><div class="bar"><i style="background:var(--fsh)" data-w="3.4" data-s="6"></i><b>3,4%</b></div><div class="bar"><i style="background:var(--lh)" data-w="7.4" data-s="6"></i><b>7,4%</b></div></div></div>
+      </div>
+      <div class="legend"><span><i style="background:var(--fsh)"></i>Летрозол</span><span><i style="background:var(--lh)"></i>Кломіфен</span><span>одна точка = одна жінка зі 100</span></div>
+    </div></div>
+
+    <div class="view fork" id="v-fork">
+      <svg viewBox="0 0 900 600"><path d="M450 120 C450 200 220 200 220 270" fill="none" stroke="var(--fsh)" stroke-width="2.5" stroke-dasharray="6 7"/><path d="M450 120 C450 200 680 200 680 270" fill="none" stroke="var(--andro)" stroke-width="2.5" stroke-dasharray="6 7"/></svg>
+      <div class="root">Резистентність до першої лінії<small>немає овуляції на максимальній дозі летрозолу</small></div>
+      <div class="br l"><img src="img/fsh_pen.webp" alt="Шприц-ручка з ФСГ"><b>Гонадотропіни</b><span>ФСГ вводять ззовні й керують стимулом дозою; потрібен УЗД-моніторинг.</span></div>
+      <div class="br r"><img src="img/laparoscope_needle.webp" alt="Лапароскопічний електрод"><b>Лапароскопічний дрилінг</b><span>Зменшують джерело андрогенів у самому яєчнику; одноразове втручання.</span></div>
+    </div>
+
+    <div class="view" id="v-chen"><div class="cmp">
+      <h3>Chen et al., NEJM 2016 · RCT · 1508 жінок із СПКЯ</h3>
+      <div class="bars" id="chBars" style="gap:20px">
+        <div class="brow"><span>Живонародження<em>після першого перенесення</em></span><div class="pair"><div class="bar"><i style="background:var(--ice)" data-w="49.3"></i><b>49,3%</b></div><div class="bar"><i style="background:var(--accent)" data-w="42.0"></i><b>42,0%</b></div></div></div>
+        <div class="brow"><span>СГЯ</span><div class="pair"><div class="bar"><i style="background:var(--ice)" data-w="1.3" data-s="5"></i><b>1,3%</b></div><div class="bar"><i style="background:var(--accent)" data-w="7.1" data-s="5"></i><b>7,1%</b></div></div></div>
+        <div class="brow"><span>Втрата вагітності</span><div class="pair"><div class="bar"><i style="background:var(--ice)" data-w="22.0"></i><b>22,0%</b></div><div class="bar"><i style="background:var(--accent)" data-w="32.7"></i><b>32,7%</b></div></div></div>
+        <div class="brow"><span style="color:var(--warn)">Прееклампсія<em>ціна стратегії</em></span><div class="pair"><div class="bar"><i style="background:var(--warn)" data-w="4.4" data-s="5"></i><b>4,4%</b></div><div class="bar"><i style="background:var(--accent)" data-w="1.4" data-s="5"></i><b>1,4%</b></div></div></div>
+      </div>
+      <div class="legend"><span><i style="background:var(--ice)"></i>Заморожені ембріони (freeze-all)</span><span><i style="background:var(--accent)"></i>Свіже перенесення</span></div>
+    </div></div>
+
+    <div class="view" id="v-src"><div class="src">
+      <div><span>МІЖНАРОДНА НАСТАНОВА</span><b>Teede HJ, et al.</b> Recommendations from the 2023 International Evidence-based Guideline for the Assessment and Management of Polycystic Ovary Syndrome. <i>Hum Reprod.</i> 2023;38(9):1655–1679.</div>
+      <div><span>RCT · ІНДУКЦІЯ ОВУЛЯЦІЇ</span><b>Legro RS, et al.</b> Letrozole versus clomiphene for infertility in the polycystic ovary syndrome. <i>N Engl J Med.</i> 2014;371(2):119–129.</div>
+      <div><span>RCT · ЕКЗ</span><b>Chen ZJ, et al.</b> Fresh versus frozen embryos for infertility in the polycystic ovary syndrome. <i>N Engl J Med.</i> 2016;375(6):523–533.</div>
+      <div id="imgCredits"><span>ЗОБРАЖЕННЯ</span>Анатомічні ілюстрації створені для навчальних цілей. Знімки УЗД та мікрофотографії — Wikimedia Commons, автори та ліцензії вказані на відповідних слайдах.</div>
+    </div></div>
+
+    <canvas id="fx" width="1800" height="1200"></canvas>
+    <svg id="co" viewBox="0 0 900 600"></svg>
+    <div id="labels"></div>
+  </div>
+
+  <div class="hs" id="hs">
+    <div class="hs-l">
+      <div class="hs-t">Гормональний профіль<small>смуга — рівень у крові · світла зона — норма</small></div>
+      <div class="hgrid" id="hrows"></div>
+    </div>
+    <div class="hs-r"><div class="hs-t">Що змінилося і чому</div><div class="why" id="why"></div></div>
+  </div>
+
+  <aside class="col"><div class="rc" id="rc"></div><div id="abbr"></div></aside>
+  <div id="wide">
+    <svg id="cw" viewBox="0 0 1000 732" width="1000" height="732"><defs>
+      <marker id="cwa" viewBox="0 0 10 10" refX="8" refY="5" markerWidth="6" markerHeight="6" orient="auto"><path d="M0 0 L10 5 L0 10z" fill="context-stroke"/></marker></defs>
+      <g id="cwE"></g><g id="cwB"></g></svg>
+    <canvas id="cwfx" width="2000" height="1464"></canvas>
+    <div id="cwN"></div><div id="cwM"></div><div id="cmid">самопідтримуване<br>коло</div>
+    <div class="cpanel"><div class="cp-dots" id="cpDots"></div><div class="cp-n" id="cpN"></div><div class="cp-t" id="cpT"></div><div class="cp-p" id="cpP"></div><div class="cp-ab" id="cpAb"></div><div class="cp-hint">→ наступна ланка · ← назад</div></div>
+  </div>
+
+  <footer class="ftr">
+    <div class="fsrc" id="fsrc"></div>
+    <div class="fmeta">Артюхова З. · 4 курс, група 1А · <b id="count"></b></div>
+    <button class="nb2" id="prev" aria-label="Назад">←</button>
+    <button class="nb2" id="next" aria-label="Далі">→</button>
+    <button class="nb2" id="fs" aria-label="Повний екран">⛶</button>
+  </footer>
+  <div id="full">
+    <div class="fs" id="f-title">
+      <img class="t-img" src="img/hero_ovary.webp" alt="Яєчник при СПКЯ">
+      <div class="t-box">
+                <h1 class="t-title">Репродуктивні проблеми при синдромі полікістозних яєчників</h1>
+        <div class="t-sub">від індукції овуляції до допоміжних репродуктивних технологій</div>
+        <div class="t-rule"></div>
+        <div class="t-auth">Артюхова Злата</div>
+        <div class="t-meta">студентка 4 курсу, група 1А</div>
+      </div>
+          </div>
+    <div class="fs" id="f-sec">
+      <img class="s-img" src="img/hero_ovary.webp" alt="">
+      <div class="s-box"><div class="s-num" id="sNum"></div><div class="s-title" id="sTitle"></div><div class="s-sub" id="sSub"></div><div class="s-list" id="sList"></div></div>
+    </div>
+    <div class="fs" id="f-end">
+      <div class="e-box">
+        <div class="e-title">Дякую за увагу</div>
+        <div class="e-sub">Запитання?</div>
+        <div class="e-src">
+          <div><span>Міжнародна настанова</span>Teede HJ, et al. Recommendations from the 2023 International Evidence-based Guideline for the Assessment and Management of Polycystic Ovary Syndrome. <i>Hum Reprod.</i> 2023;38(9):1655–1679.</div>
+          <div><span>RCT · індукція овуляції</span>Legro RS, et al. Letrozole versus clomiphene for infertility in the polycystic ovary syndrome. <i>N Engl J Med.</i> 2014;371(2):119–129.</div>
+          <div><span>RCT · ЕКЗ</span>Chen ZJ, et al. Fresh versus frozen embryos for infertility in the polycystic ovary syndrome. <i>N Engl J Med.</i> 2016;375(6):523–533.</div>
+          <div><span>Зображення</span>Анатомічні ілюстрації створені для навчальних цілей; клінічні знімки — Wikimedia Commons, автори та ліцензії вказані на слайдах.</div>
+        </div>
+      </div>
+    </div>
+  </div>
+</div>
+</div>
+
+<script>window.REAL_IMAGES={"us_pcos": {"src": "img/real/us_pcos_3d.webp", "credit": "Джерело знімка: Wikimedia Commons, «Ultrasound scans and 3D rendering of polycystic ovaries»"}};</script>
+<script>
+/* Right-column content per slide. Each slide uses a layout that fits its content: lead, steps, compare, flow, table, figure, proscons. */
+const TEXT=[
+null,
+{t:'Клінічний випадок: ановуляторне безпліддя',k:'lead',
+ lead:'Олігоменорея при безплідді — ознака того, що овуляція відбувається рідко або не відбувається взагалі.',
+ p:'Регулярна менструація є наслідком овуляції: жовте тіло виробляє прогестерон, а його спад запускає кровотечу. Коли менструацій лише 6–8 на рік, у більшості циклів немає яйцеклітини, яку можна запліднити. Найчастіша причина такого ановуляторного безпліддя — СПКЯ, що трапляється у 10–13% жінок репродуктивного віку.',
+ q:'Чому при СПКЯ зникає овуляція і як її відновити найбезпечнішим шляхом?'},
+
+{t:'Діагноз СПКЯ: два з трьох Роттердамських критеріїв',k:'table',
+ head:['Критерій','В Олени'],
+ rows:[['Оліго- або ановуляція','<span class="y">так</span> — цикл 40–60 днів'],['Гіперандрогенія (клінічна чи біохімічна)','<span class="n">не обов’язково</span>'],['Полікістозна морфологія яєчників','<span class="y">так</span> — ≥20 фолікулів 2–9 мм']],
+ p:'Діагноз ставлять лише після виключення станів, що імітують СПКЯ: дисфункції щитоподібної залози (ТТГ), гіперпролактинемії, некласичної ВГКН (17-OH-прогестерон).',
+ rec:['Настанова 2023, рек. 1.4–1.5','У дорослих ПКМЯ можна визначити або за УЗД, або за АМГ — не обома методами разом. У підлітків ні УЗД, ні АМГ не застосовують.']},
+
+{t:'Норма: селекція одного домінантного фолікула',k:'steps',
+ steps:[['Рекрутування','Імпульсний ГнРГ → ФСГ і ЛГ. ФСГ запускає ріст когорти антральних фолікулів.'],
+  ['Селекція','Найчутливіший до ФСГ фолікул росте швидше й виробляє естрадіол.'],
+  ['Домінантність','Е2 та інгібін B знижують ФСГ — решта когорти, якій ФСГ потрібно більше, атрезує.'],
+  ['Овуляція','Пік Е2 перемикає зворотний зв’язок на позитивний: викид ЛГ, овуляція, жовте тіло.']],
+ foot:'Цей механізм потребує точного балансу ГнРГ, ЛГ, ФСГ і Е2. При СПКЯ баланс порушений на кожному рівні.'},
+
+{t:'Ланка 1. Гіпоталамус: прискорений генератор імпульсів ГнРГ',k:'compare',
+ cols:['Норма','СПКЯ'],
+ rows:[['Частота імпульсів ГнРГ','помірна, сповільнюється в лютеїнову фазу','постійно висока'],['Прогестерон','є (жовте тіло)','немає — немає овуляції'],['Чутливість до прогестерону','збережена','знижена андрогенами'],['Що синтезує гіпофіз','баланс ФСГ і ЛГ','переважно ЛГ']],
+ foot:'Ановуляція одночасно і причина, і наслідок прискорення імпульсів — перша ознака порочного кола.'},
+
+{t:'Ланка 2. Гіпофіз: ЛГ переважає над ФСГ',k:'flow',
+ flow:[['Часті імпульси ГнРГ','у гонадотрофах передньої частки гіпофіза'],['Синтез β-субодиниці ЛГ ↑, ФСГ відносно ↓','співвідношення ЛГ/ФСГ часто підвищене (не діагностичний критерій)'],['ЛГ → тека-клітини','надлишковий стимул до синтезу андрогенів'],['ФСГ → гранульозні клітини','недостатній стимул до росту і синтезу естрадіолу']],
+ foot:'Гормональний дисбаланс у крові перетворюється на клітинний дисбаланс усередині кожного фолікула.'},
+
+{t:'Ланка 3. Фолікул у нормі: дві клітини — два гонадотропіни',k:'table',
+ head:['','Тека-клітина','Гранульозна клітина'],
+ rows:[['Рецептор','ЛГ','ФСГ'],['Кровопостачання','капіляри поруч','немає власних судин'],['Ключовий процес','холестерин → андрогени','андрогени → естрадіол (ароматаза)'],['Продукт','андростендіон','естрадіол']],
+ p:'Андрогени теки дифундують крізь базальну мембрану до гранульози. Чим більше естрадіолу у фолікулярній рідині, тим чутливішим до ФСГ стає фолікул — позитивна петля, що веде до домінантності.'},
+
+{t:'Ланка 3. Фолікул при СПКЯ: андрогени накопичуються',k:'compare',
+ cols:['Норма','СПКЯ'],
+ rows:[['Стимул теки','ЛГ','ЛГ ↑ + інсулін (ко-гонадотропін), вроджена гіперактивність'],['Ароматаза гранульози','активна під дією ФСГ','пригнічена: мало ФСГ, високий АМГ'],['Мікрооточення фолікула','естрогенне','андрогенне'],['Результат','ріст до домінантного фолікула','зупинка на 2–9 мм']],
+ foot:'Більше дрібних фолікулів → вищий АМГ → сильніше гальмування ароматази: ще одне замкнене коло.'},
+
+{t:'Ланка 4. Вибіркова інсулінорезистентність',k:'paradox',
+ lead:'Інсулін зв’язується з рецептором, але відповідь клітин різна залежно від шляху сигналу.',
+ a:['Метаболічний шлях','ослаблений','До мембрани переміщується мало везикул GLUT4 — глюкоза засвоюється гірше. Підшлункова компенсує: гіперінсулінемія.'],
+ b:['Стероїдогенний шлях','збережений','У тека-клітинах інсулін, як вважають, і далі діє як ко-гонадотропін — посилює синтез андрогенів.'],
+ foot:'Ожиріння посилює резистентність, проте вона трапляється і при нормальній масі тіла.'},
+
+{t:'Ланка 5. Печінка: ГЗСГ знижується, вільний тестостерон зростає',k:'figure',
+ big:'ГЗСГ ↓ → вільний Т ↑',cap:'без зміни загального тестостерону',
+ p:'Більшість тестостерону в крові зв’язана з глобуліном, що зв’язує статеві гормони, і неактивна. Інсулін пригнічує синтез ГЗСГ у гепатоцитах — частка вільного, біологічно активного тестостерону зростає. Клінічно це гірсутизм та акне, лабораторно — підвищений індекс вільних андрогенів.',
+ foot:'Так метаболічне порушення переходить в ендокринне.'},
+
+{t:'Порочне коло СПКЯ'},
+{t:'Стратегія лікування: де розірвати коло'},
+
+{t:'Крок 0. Зниження маси тіла',k:'figure',
+ big:'5–10%',cap:'зниження маси тіла може відновити овуляцію',
+ chain:['Адипоцити й запалення ↓','Чутливість до інсуліну ↑','Інсулін ↓','ГЗСГ ↑, андрогени ↓','Овуляція'],
+ rec:['Настанова 2023, рек. 5.1','Перед індукцією: зміна способу життя, фолієва кислота (при ІМТ понад 30 — вища доза), скринінг порушень вуглеводного обміну, контроль АТ.']},
+
+{t:'Крок 0. Метформін',k:'profile',
+ rows:[['Група','бігуанід'],['Мішень','глюконеогенез у гепатоцитах'],['Ефект','глюкоза з печінки ↓ → інсулін ↓ → андрогени ↓'],['Обмеження','не підвищує ФСГ напряму — як засіб індукції слабший за летрозол']],
+ p:'Місце в лікуванні: окремі пацієнтки, комбінація з кломіфеном, особливо — при порушеннях вуглеводного обміну.'},
+
+{t:'1-ша лінія. Летрозол: блок ароматази',k:'profile',
+ rows:[['Група','нестероїдний інгібітор ароматази (CYP19A1)'],['Мішень','активний центр ароматази'],['Ефект','андрогени не перетворюються на естрогени → Е2 ↓'],['Рецептори естрогену','вільні — периферичні тканини не блокуються'],['Схема','2,5 мг/добу, 3–7 день циклу; до 7,5 мг'],['T½','≈ 2 доби — блок швидко зникає']]},
+
+{t:'1-ша лінія. Летрозол: від падіння Е2 до моно-овуляції',k:'steps',
+ steps:[['Е2 ↓','Ароматазу заблоковано — естрадіолу в крові мало.'],['Зворотний зв’язок знято','Гіпоталамус і гіпофіз не отримують гальмівного сигналу: ГнРГ і ФСГ ↑.'],['Поріг подолано','ФСГ перевищує поріг найчутливішого фолікула — він починає рости.'],['Моно-овуляція','Після відміни Е2 цього фолікула знову гальмує ФСГ, решта атрезує. Фолікул 18–20 мм за УЗД готовий до овуляції.']]},
+
+{t:'Альтернатива. Кломіфен: блок рецептора, а не синтезу',k:'compare',
+ cols:['Летрозол','Кломіфен'],
+ rows:[['Механізм','блокує синтез естрогену','блокує рецептори естрогену (SERM)'],['Рівень Е2 у крові','знижений','нормальний або високий'],['Період напіввиведення','≈ 2 доби','зукломіфен — тижні, накопичується'],['Периферичні тканини','не уражені','антиестрогенний ефект']],
+ foot:'Мета однакова — підвищити ФСГ. Відрізняється шлях, і це визначає побічні ефекти.'},
+
+{t:'Ціна блокади рецепторів: ендометрій і цервікальний слиз',k:'effects',
+ a:['Ендометрій','Без естрогенного сигналу функціональний шар не проліферує — гірші умови для імплантації.'],
+ b:['Цервікальний слиз','Густий, без каналів — сперматозоїдам важко пройти.'],
+ lead:'Овуляція є — вагітності немає',
+ p:'Це пояснює розрив між частотою овуляції і частотою вагітностей на кломіфені і те, чому він поступився першою лінією летрозолу.'},
+
+{t:'Доказова база: летрозол проти кломіфену',k:'figure',
+ big:'27,5% vs 19,1%',cap:'кумулятивне живонародження, PPCOS II',
+ p:'Рандомізоване дослідження Legro et al. (NEJM 2014): 750 жінок із СПКЯ та безпліддям, до п’яти циклів. Овуляція — 61,7% проти 48,3% циклів. Результат відповідає механізму: обидва препарати підвищують ФСГ, але летрозол не блокує периферичні рецептори.',
+ rec:['Настанова 2023, рек. 5.3.1','Летрозол — препарат першої лінії індукції овуляції при СПКЯ.']},
+
+{t:'Друга лінія: резистентність до летрозолу',k:'lead',
+ lead:'Три цикли летрозолу з підвищенням дози до 7,5 мг — овуляції немає.',
+ p:'Власного ФСГ, навіть підсиленого, недостатньо, щоб жоден фолікул подолав поріг. Якщо ж овуляція є, а вагітності немає, — треба шукати інші фактори безпліддя. Настанова пропонує дві опції другої лінії, що розривають коло в різних місцях: гонадотропіни вводять ФСГ ззовні, лапароскопічний дрилінг зменшує джерело андрогенів.',
+ q:'Вибір між ними — індивідуальний: клінічна ситуація, доступність, переваги пацієнтки.'},
+
+{t:'Гонадотропіни: потрапити у вузьке «вікно» ФСГ',k:'steps',
+ steps:[['Поріг ФСГ','Кожен фолікул починає рости лише тоді, коли ФСГ перевищує його індивідуальний поріг.'],['Вузьке вікно','При СПКЯ фолікулів багато й пороги близькі: різниця між дозою для одного і для багатьох фолікулів мала.'],['Low-dose step-up','Старт 37,5–75 МО/добу, підвищення лише за відсутності відповіді — поріг перетинає один фолікул.']],
+ rec:['Настанова 2023, рек. 5.5.8','Якщо більше двох фолікулів перевищують 14 мм — цикл скасовують: ризик багатоплідності та СГЯ.']},
+
+{t:'Лапароскопічний дрилінг яєчників',k:'proscons',
+ lead:'≈4 точкові коагуляції строми на яєчник → андрогени й інгібін ↓ → ЛГ ↓, ФСГ ↑ → овуляція, часто кілька циклів поспіль.',
+ pros:['Моно-овуляція','Немає ризику СГЯ','Немає ризику багатоплідності','Не потрібен інтенсивний моніторинг'],
+ cons:['Операція й анестезія','Ризик спайок','Можливе зниження оваріального резерву','Вищий ризик при ожирінні']},
+
+{t:'ЕКЗ / ІКСІ: чому яєчник при СПКЯ відповідає надмірно',k:'flow',
+ flow:[['Показання','невдача першої та другої ліній або інші фактори: трубний, чоловічий'],['Багато ФСГ-чутливих антральних фолікулів','звідси високий АМГ'],['Дози ФСГ для ЕКЗ рятують більшу частину когорти','яєчники збільшуються, Е2 дуже високий'],['Ризик синдрому гіперстимуляції яєчників','головна загроза ЕКЗ при СПКЯ']]},
+
+{t:'Патогенез СГЯ: ХГЛ → VEGF → проникність судин',k:'timeline',
+ flow:['ХГЛ-тригер','Численні жовті тіла','VEGF ↑','Проникність капілярів ↑','Рідина в «третій простір»'],
+ a:['Рання СГЯ','через 3–9 днів після тригера ХГЛ'],b:['Пізня СГЯ','від ендогенного ХГЛ, якщо настала вагітність'],
+ p:'Клініка: збільшені яєчники, асцит, гідроторакс, гемоконцентрація з ризиком тромбозів, олігурія.'},
+
+{t:'Профілактика СГЯ 1: протокол з антагоністом ГнРГ',k:'compare',
+ cols:['Антагоністовий протокол','Довгий протокол з агоністом'],
+ rows:[['Блок піку ЛГ','конкурентна блокада, без «спалаху»','десенситизація гіпофіза'],['Чутливість гіпофіза','збережена','втрачена'],['Тригер агоністом ГнРГ','можливий','не спрацює']],
+ rec:['Настанова 2023, рек. 5.7.1','При СПКЯ рекомендовано протокол з антагоністом ГнРГ.']},
+
+{t:'Профілактика СГЯ 2: тригер агоністом ГнРГ',k:'compare',
+ cols:['ХГЛ','Агоніст ГнРГ'],
+ rows:[['Лютеотропний сигнал','кілька днів','≈ 1 доба (ендогенний пік ЛГ)'],['Жовті тіла','активні','швидко регресують'],['VEGF','високий','знижується'],['Ризик ранньої СГЯ','високий','майже відсутній'],['Лютеїнова фаза','повноцінна','неповноцінна']],
+ rec:['Настанова 2023, рек. 5.7.2 (сильна)','Тригер агоністом з кріоконсервацією всіх ембріонів, якщо ризик СГЯ високий.']},
+
+{t:'Профілактика СГЯ 3: стратегія freeze-all',k:'stats',
+ stats:[['49,3%','vs 42,0%','живонародження'],['1,3%','vs 7,1%','СГЯ'],['22,0%','vs 32,7%','втрати вагітності'],['4,4%','vs 1,4%','прееклампсія',1]],
+ p:'Chen et al., NEJM 2016, 1508 жінок із СПКЯ: заморожені ембріони проти свіжого перенесення. Без вагітності в циклі стимуляції немає ендогенного ХГЛ — немає й пізньої СГЯ. Але прееклампсія частіша, тож рішення зважене.'},
+
+{t:'Ембріологічний етап',k:'steps',
+ steps:[['День 0 · пункція','Трансвагінальна аспірація фолікулів під УЗД-контролем.'],['День 1 · запліднення','Два пронуклеуси (2PN) підтверджують нормальне запліднення.'],['День 5–6 · бластоциста','Внутрішня клітинна маса (ембріон) і трофектодерма (плацента).'],['Вітрифікація','Надшвидке заморожування в рідкому азоті при стратегії freeze-all.']],
+ foot:'Альтернатива при дуже високому ризику СГЯ — IVM: без стимуляції і без СГЯ, але з нижчим живонародженням.'},
+
+{t:'Перенесення одного ембріона і вагітність високого ризику',k:'lead',
+ lead:'Переносять один ембріон: багатоплідна вагітність сама є ускладненням.',
+ p:'Ті самі механізми, що порушували овуляцію, — інсулінорезистентність, ожиріння, гіперандрогенія — підвищують акушерські ризики. Сама ДРТ не додає ризику понад той, що зумовлений СПКЯ.',
+ q:'Метформін не запобігає гестаційному діабету чи прееклампсії — ключові ранній скринінг і моніторинг.'},
+
+{t:'Висновки'},
+null];
+const SECTIONS={3:['I','Чому немає овуляції','Патогенез: п’ять ланок одного порочного кола',['Гіпоталамус','Гіпофіз','Фолікул','Інсулін','Печінка']],
+ 11:['II','Як відновити овуляцію','Індукція овуляції: від способу життя до другої лінії',['Маса тіла і метформін','Летрозол','Кломіфен','Гонадотропіни','Дрилінг']],
+ 22:['III','ЕКЗ при СПКЯ','Гіпервідповідь яєчників і профілактика СГЯ',['Механізм СГЯ','Антагоніст','Тригер агоністом','Freeze-all','Лабораторія']]};
+
+/* Animated vicious circle: stages for build / treatment / conclusions */
+const CIRCLE={
+ build:[
+  {n:['A'],e:[],t:'Гіпоталамус',p:'При СПКЯ генератор імпульсів ГнРГ працює з постійно високою частотою.'},
+  {n:['B'],e:['AB'],t:'Гіпофіз',p:'Часті імпульси зсувають синтез на користь ЛГ; ФСГ стає відносно недостатнім.'},
+  {n:['C'],e:['BC'],t:'Тека-клітини',p:'Надлишок ЛГ змушує теку виробляти забагато андрогенів.'},
+  {n:['D'],e:['CD'],t:'Фолікули',p:'Андрогени й високий АМГ пригнічують ароматазу — фолікули зупиняються на 2–9 мм.'},
+  {n:['E'],e:['DE'],t:'Ановуляція',p:'Жоден фолікул не стає домінантним — овуляції немає.'},
+  {n:['F'],e:['EF'],t:'Прогестерон',p:'Без овуляції немає жовтого тіла і прогестерону.'},
+  {n:[],e:['FA'],t:'Коло замкнулося',p:'Без прогестерону ніщо не сповільнює генератор ГнРГ — цикл повторюється знову і знову.',loop:1},
+  {n:['G'],e:['GC'],t:'Інсулінорезистентність',p:'Гіперінсулінемія прямо посилює синтез андрогенів у теці як ко-гонадотропін.'},
+  {n:['H'],e:['GH','HC'],t:'Печінка',p:'Інсулін пригнічує синтез ГЗСГ — зростає частка вільного тестостерону.'},
+  {n:[],e:[],t:'Висновок',p:'Щоб відновити овуляцію, достатньо розірвати коло хоча б в одній ланці.',loop:1}],
+ treat:[
+  {t:'Мета лікування',p:'Кожен метод розриває конкретну ланку кола. Мета всіх — моно-овуляція і одна дитина.',loop:1},
+  {x:['G'],brk:['GC','GH'],t:'Маса тіла і метформін',p:'Зменшують інсулін → менше стимулу для теки і більше ГЗСГ. Іноді цього достатньо для овуляції.'},
+  {x:['D1'],brk:['DE'],t:'Летрозол (кломіфен)',p:'Підвищують власний ФСГ пацієнтки — фолікул долає поріг і стає домінантним. Перша лінія.'},
+  {x:['D2'],brk:['DE'],t:'Гонадотропіни',p:'Вводять ФСГ ззовні з обережним підвищенням дози. Друга лінія.'},
+  {x:['C'],brk:['CD'],t:'Лапароскопічний дрилінг',p:'Зменшує андроген-продукуючу строму. Друга лінія.'},
+  {x:[],brk:[],t:'Результат',p:'Домінантний фолікул → овуляція → жовте тіло → прогестерон сповільнює ГнРГ. Коло розірвано.',win:1}],
+ concl:[
+  {t:'Висновок 1',p:'СПКЯ — самопідтримуване коло, у якому гіпоталамус, гіпофіз, яєчник, жирова тканина і печінка посилюють одне одного.',loop:1},
+  {x:['G','D1','D2','C'],brk:['GC','GH','DE','CD'],t:'Висновок 2',p:'Індукція овуляції — послідовний розрив ланок: маса тіла і метформін → летрозол → гонадотропіни або дрилінг.'},
+  {x:['G','D1','D2','C'],brk:['GC','GH','DE','CD'],t:'Висновок 3',p:'ЕКЗ — третя лінія. При СПКЯ її безпека визначається розривом ланцюга СГЯ: антагоніст, тригер агоністом, freeze-all, перенесення одного ембріона.',win:1}]
+};
+
+(()=>{
+const $=s=>document.querySelector(s),$$=s=>[...document.querySelectorAll(s)];
+const stage=$('#stage');
+const css=n=>getComputedStyle(document.documentElement).getPropertyValue(n).trim();
+const C={fsh:css('--fsh'),lh:css('--lh'),e2:css('--e2'),andro:css('--andro'),ins:css('--ins'),amh:css('--amh'),warn:css('--warn'),ok:css('--ok'),ice:css('--ice'),acc:css('--accent'),
+  gnrh:'#CDB3FF',glu:'#FFF0D0',vegf:'#FFD36B',plasma:'#CBEFFF',let:'#3FE6D2',clo:'#B98CFF',w:'#EDEAF2'};
+
+/* ---------- real images (filled when available) ---------- */
+const REAL=window.REAL_IMAGES||{};
+function setReal(imgId,phId,srcId,key){const r=REAL[key];const im=$('#'+imgId),ph=phId&&$('#'+phId),sn=srcId&&$('#'+srcId);
+  if(r){im.src=r.src;im.style.display='';if(ph)ph.style.display='none';if(sn)sn.textContent=r.credit||'';}else{im.style.display='none';if(ph)ph.style.display='';if(sn)sn.textContent='';}}
+setReal('usPcos','usPcosPh','usPcosSrc','us_pcos');
+if(REAL.us_dom){$('#usDom').src=REAL.us_dom.src;$('#usDomSrc').textContent=REAL.us_dom.credit||'';}
+$('#mZyg').src=REAL.zygote?REAL.zygote.src:'img/zygote_2pn_micro.webp';$('#mBlast').src=REAL.blastocyst?REAL.blastocyst.src:'img/blastocyst_micro.webp';
+$('#labSrc').textContent=[REAL.zygote&&REAL.zygote.credit,REAL.blastocyst&&REAL.blastocyst.credit].filter(Boolean).join(' · ')||'Мікрофотографії ембріонів — ілюстрація, не клінічні знімки';
+
+/* ---------- fit ---------- */
+function fit(){const vp=stage.parentElement.getBoundingClientRect();const s=Math.min(vp.width/1600,(innerHeight-16)/900);stage.style.transform=`translate(-50%,-50%) scale(${Math.max(.1,s)})`;}
+addEventListener('resize',fit);fit();
+
+const F=(fx,fy)=>[fx*900,fy*600];
+const Q=(fx,fy)=>[150+fx*600,fy*600];
+let timers=[];const T=(ms,fn)=>timers.push(setTimeout(fn,ms));const clearT=()=>{timers.forEach(clearTimeout);timers=[];};
+
+/* ---------- particles ---------- */
+const cv=$('#fx'),ctx=cv.getContext('2d');ctx.scale(2,2);
+const sprites={};
+function sprite(col){if(sprites[col])return sprites[col];const c=document.createElement('canvas');c.width=c.height=64;const g=c.getContext('2d');
+  const gr=g.createRadialGradient(32,32,0,32,32,32);gr.addColorStop(0,'#ffffff');gr.addColorStop(.2,col);gr.addColorStop(.5,col+'77');gr.addColorStop(1,col+'00');g.fillStyle=gr;g.fillRect(0,0,64,64);return sprites[col]=c;}
+let emitters=[],parts=[];
+const bez=(p,t)=>{const u=1-t;return[u*u*u*p[0][0]+3*u*u*t*p[1][0]+3*u*t*t*p[2][0]+t*t*t*p[3][0],u*u*u*p[0][1]+3*u*u*t*p[1][1]+3*u*t*t*p[2][1]+t*t*t*p[3][1]];};
+function emit(o){const e=Object.assign({rate:8,spd:.35,size:8,jit:10,c1:'#fff',c2:null,conv:1,convAt:.5,stop:null,hold:2.5,acc:0,pulse:null,pt:0,on:true},o);emitters.push(e);return e;}
+function clearFx(){emitters=[];parts=[];}
+function spawn(e){parts.push({e,t:0,off:(Math.random()-.5)*2*e.jit,sz:e.size*(.7+Math.random()*.6),conv:Math.random()<e.conv,stopT:e.stop?(e.stop[0]+Math.random()*(e.stop[1]-e.stop[0])):null,held:0,a:1});}
+let last=performance.now();
+function frame(now){const dt=Math.min(.05,(now-last)/1000);last=now;ctx.clearRect(0,0,900,600);
+  for(const e of emitters){if(!e.on)continue;if(e.pulse){e.pt+=dt;if(e.pt>=e.pulse.period){e.pt=0;for(let i=0;i<e.pulse.count;i++)setTimeout(()=>spawn(e),i*40);}}else{e.acc+=dt*e.rate;while(e.acc>=1){e.acc-=1;spawn(e);}}}
+  ctx.globalCompositeOperation='lighter';
+  for(let i=parts.length-1;i>=0;i--){const p=parts[i],e=p.e;
+    const stopAt=(e.c2?(!p.conv?p.stopT:null):p.stopT);
+    if(stopAt!=null&&p.t>=stopAt){p.held+=dt;if(p.held>e.hold)p.a-=dt*1.5;}else p.t+=e.spd*dt;
+    if(p.t>=1)p.a-=dt*4;if(p.a<=0){parts.splice(i,1);continue;}
+    const t=Math.min(p.t,1),pos=bez(e.p,t),d2=bez(e.p,Math.min(1,t+.01));let nx=-(d2[1]-pos[1]),ny=d2[0]-pos[0];const nl=Math.hypot(nx,ny)||1;
+    const x=pos[0]+nx/nl*p.off,y=pos[1]+ny/nl*p.off;const col=(e.c2&&p.conv&&t>=e.convAt)?e.c2:e.c1;
+    ctx.globalAlpha=Math.max(0,Math.min(1,t*8)*p.a);const s=p.sz;ctx.drawImage(sprite(col),x-s,y-s,s*2,s*2);}
+  ctx.globalAlpha=1;ctx.globalCompositeOperation='source-over';drawPulse(dt);requestAnimationFrame(frame);}
+requestAnimationFrame(frame);
+const pcv=$('#pulseCv'),pctx=pcv.getContext('2d');const pulse={period:3.2,phase:0};
+function drawPulse(dt){if(!$('#v-gnrh').classList.contains('on'))return;pulse.phase+=dt;const W=620,H=130;pctx.clearRect(0,0,W,H);
+  pctx.strokeStyle='#3A3550';pctx.lineWidth=2;pctx.beginPath();pctx.moveTo(0,H-14);pctx.lineTo(W,H-14);pctx.stroke();
+  pctx.strokeStyle=C.gnrh;pctx.lineWidth=4;pctx.beginPath();const sp=90;
+  for(let x=0;x<=W;x+=2){const tt=pulse.phase-(W-x)/sp;const ph=((tt%pulse.period)+pulse.period)%pulse.period;const y=H-14-(ph<.35?Math.sin(ph/.35*Math.PI)*95:0);x?pctx.lineTo(x,y):pctx.moveTo(x,y);}pctx.stroke();}
+
+/* ---------- views ---------- */
+const views={};$$('.view').forEach(v=>views[v.id.slice(2)]=v);let curV=null;
+function variant(vid,key){$$('#v-'+vid+' .im[data-k]').forEach(im=>{const k=im.dataset.k;im.classList.toggle('off',Array.isArray(key)?!key.includes(k):k!==key);});}
+function showView(id,mode,focus){const nv=views[id],ov=curV;if(ov===nv)return;const fo=focus?`${focus[0]}px ${focus[1]}px`:'450px 300px';
+  nv.style.transition='none';nv.style.transformOrigin=fo;nv.style.transform=mode==='in'?'scale(.75)':mode==='out'?'scale(2.4)':'scale(1)';void nv.offsetWidth;nv.style.transition='';nv.classList.add('on');nv.style.transform='scale(1)';
+  if(ov){ov.style.transformOrigin=fo;ov.style.transform=mode==='in'?'scale(3)':mode==='out'?'scale(.75)':'scale(1)';ov.classList.remove('on');const o=ov;setTimeout(()=>{if(!o.classList.contains('on')){o.style.transition='none';o.style.transform='scale(1)';void o.offsetWidth;o.style.transition='';}},1200);}
+  curV=nv;}
+
+/* ---------- callouts ---------- */
+const co=$('#co'),labels=$('#labels');
+function clearLabels(){co.innerHTML='';labels.innerHTML='';$$('.drug').forEach(b=>b.remove());}
+function callout(x,y,lx,ly,html,col=C.w){const NS='http://www.w3.org/2000/svg';
+  const l=document.createElementNS(NS,'line');l.setAttribute('x1',x);l.setAttribute('y1',y);l.setAttribute('x2',lx);l.setAttribute('y2',ly);l.setAttribute('stroke','rgba(237,234,242,.75)');co.appendChild(l);
+  const c=document.createElementNS(NS,'circle');c.setAttribute('cx',x);c.setAttribute('cy',y);c.setAttribute('r',4.5);c.setAttribute('fill','#fff');c.setAttribute('stroke','#0D0C12');c.setAttribute('stroke-width',2);c.style.opacity=0;c.style.transition='opacity .4s';co.appendChild(c);
+  const d=document.createElement('div');d.className='lbl';d.style.setProperty('--c',col);d.innerHTML=html;labels.appendChild(d);
+  const w=d.offsetWidth,h=d.offsetHeight;let left=lx>x+4?lx:lx<x-4?lx-w:lx-w/2;let top=ly>y+4?ly:ly<y-4?ly-h:ly-h/2;
+  left=Math.max(6,Math.min(894-w,left));top=Math.max(6,Math.min(594-h,top));d.style.left=left+'px';d.style.top=top+'px';
+  requestAnimationFrame(()=>requestAnimationFrame(()=>{l.classList.add('on');c.style.opacity=1;d.classList.add('on');}));}
+function tag(x,y,html,col=C.w){const d=document.createElement('div');d.className='lbl tag';d.style.setProperty('--c',col);d.innerHTML=html;labels.appendChild(d);
+  d.style.left=Math.max(6,Math.min(894-d.offsetWidth,x-d.offsetWidth/2))+'px';d.style.top=(y-d.offsetHeight/2)+'px';requestAnimationFrame(()=>requestAnimationFrame(()=>d.classList.add('on')));return d;}
+function drug(pos,o){const b=document.createElement('div');b.className='drug';b.style.setProperty('--dc',o.c);Object.assign(b.style,pos);
+  b.innerHTML=(o.img?`<img src="img/${o.img}.webp" alt="">`:'')+`<div><div class="dn">${o.n}</div><div class="dg">${o.g}</div><div class="dl">${o.d}</div></div>`;
+  $('#scene').appendChild(b);requestAnimationFrame(()=>requestAnimationFrame(()=>b.classList.add('on')));return b;}
+
+/* ---------- ovary & follicles ---------- */
+const OC=[531,370],RX=225,RY=124,NF=24,fols=[];
+for(let i=0;i<NF;i++){const d=document.createElement('div');d.className='fl';d.dataset.s='a';
+  d.innerHTML=['a:follicle_antral_small','g:follicle_graafian','o:follicle_ovulation','c:corpus_luteum','t:follicle_atretic'].map(s=>{const[k,f]=s.split(':');return `<img class="${k}" src="img/${f}.webp" alt="">`;}).join('');
+  d.style.opacity=0;$('#fols').appendChild(d);fols.push({d,x:OC[0],y:OC[1],r:1});}
+const rnd=i=>{const x=Math.sin(i*12.9898+4.1)*43758.5453;return x-Math.floor(x)};
+function setF(i,o){const f=fols[i];Object.assign(f,o);f.d.style.transform=`translate(${f.x-50}px,${f.y-50}px) scale(${Math.max(.001,f.r/100)})`;f.d.style.opacity=o.op??1;if(o.s)f.d.dataset.s=o.s;}
+function hideF(i){const f=fols[i];f.d.style.opacity=0;f.d.style.transform=`translate(${f.x-50}px,${f.y-50}px) scale(.001)`;}
+function layout(a){for(let i=0;i<NF;i++)a[i]?setF(i,a[i]):hideF(i);}
+const ring=(i,n,f=1,d=30)=>{const a=-Math.PI/2+i/n*2*Math.PI+(rnd(i)-.5)*.12;const ff=f+(rnd(i+50)-.5)*.08;return{x:OC[0]+Math.cos(a)*RX*ff,y:OC[1]+Math.sin(a)*RY*ff,r:d+rnd(i+99)*6,s:'a'};};
+const L={pcos:(n=22)=>Array.from({length:n},(_,i)=>ring(i,n)),
+  normal:()=>[-2.6,-1.75,-.75,.3,1.2,2.1,2.95].map((a,i)=>({x:OC[0]+Math.cos(a)*RX*.9,y:OC[1]+Math.sin(a)*RY*.9,r:30+rnd(i+7)*8,s:'a'}))};
+const DOM=3;const domAt=(r,f=.82)=>{const a=-Math.PI/2+DOM/22*2*Math.PI;return{x:OC[0]+Math.cos(a)*RX*f,y:OC[1]+Math.sin(a)*RY*f,r,s:r>60?'g':'a'};};
+function ovPCOS(on){variant('ov',on?['ovp','ut']:['ovn','ut']);$('#ovwrap').style.transform=on?'scale(1.05)':'scale(1)';}
+const aglow=v=>$('#aglow').style.opacity=v;
+const P={gnrh:[[82,90],[79,110],[74,128],[68,142]],fsh:[[80,160],[140,225],[210,262],[300,300]],lh:[[66,170],[86,260],[170,330],[282,360]],
+  e2:[[420,250],[390,140],[270,70],[120,80]],ins:[[140,520],[190,490],[240,450],[312,420]]};
+const axisE={};
+function axisFlows(h,o={}){emitters=emitters.filter(e=>!e.axis);const r=v=>Math.max(0,(v-10)/90);
+  const mk=(k,col,v,x={})=>{if(v<=0)return;axisE[k]=emit(Object.assign({p:P[k],c1:col,rate:2+r(v)*14,spd:.28+r(v)*.25,size:6+r(v)*3.5,jit:6,axis:true},x));};
+  if(!o.gnrhOff)mk('gnrh',C.gnrh,60,{pulse:{period:o.fast?1.2:2.8,count:6},spd:.9,size:7,jit:3});
+  mk('fsh',C.fsh,h.fsh);mk('lh',C.lh,h.lh);if(!o.e2Off)mk('e2',C.e2,h.e2);if(!o.insOff)mk('ins',C.ins,h.ins);}
+
+/* ---------- hormones ---------- */
+const H=[['fsh','ФСГ','--fsh'],['lh','ЛГ','--lh'],['e2','Естрадіол','--e2'],['andro','Андрогени','--andro'],['ins','Інсулін','--ins'],['amh','АМГ','--amh']];
+$('#hrows').innerHTML=H.map(([k,n,c])=>`<div class="hrow" id="hr-${k}" style="--c:var(${c})"><span class="hn"><i></i>${n}</span><span class="htr"><span class="nb"></span><span class="hf" id="hf-${k}"></span></span><span class="hv" id="hv-${k}"></span></div>`).join('');
+const word=v=>v<28?['↓ знижено','lo']:v<=62?['норма','']:v<=84?['↑','hi']:['↑↑','hi'];
+const cur={fsh:45,lh:45,e2:50,andro:40,ins:40,amh:42};
+function setH(h){Object.assign(cur,h);for(const[k]of H){const v=cur[k];$('#hf-'+k).style.width=v+'%';const[w,c]=word(v);const el=$('#hv-'+k);el.textContent=w==='↓ знижено'?'↓':w;el.className='hv '+c;}}
+function why(list){const el=$('#why');$$('.hrow').forEach(r=>r.classList.remove('chg'));
+  if(!list||!list.length){el.innerHTML='<div class="none on">Без змін порівняно з попереднім етапом.</div>';return;}
+  el.innerHTML=list.map(([k,t])=>{const c=k?`var(--${k})`:'var(--fg)';const n=k?H.find(h=>h[0]===k)[1]:'';return `<div style="--c:${c}">${n?`<b>${n}</b> `:''}${t}</div>`;}).join('');
+  list.forEach(([k])=>k&&$('#hr-'+k).classList.add('chg'));$$('#why div').forEach((d,i)=>T(250+i*350,()=>d.classList.add('on')));}
+const HN={fsh:48,lh:45,e2:52,andro:38,ins:38,amh:42},HP={fsh:34,lh:80,e2:46,andro:84,ins:80,amh:88};
+
+/* ---------- chain diagram ---------- */
+const N={A:[450,60,'Імпульси ГнРГ частішають'],B:[720,160,'ЛГ ↑, ФСГ відносно ↓'],C:[720,330,'Тека: андрогени ↑'],D:[450,430,'Фолікули зупинені на 2–9 мм · АМГ ↑'],
+  E:[180,330,'Немає домінантного фолікула → ановуляція'],Fn:[180,160,'Немає прогестерону'],G:[450,245,'Інсулінорезистентність → інсулін ↑'],Hh:[720,520,'Печінка: ГЗСГ ↓ → вільний тестостерон ↑']};
+const EDG=[['A','B'],['B','C'],['C','D'],['D','E'],['E','Fn'],['Fn','A'],['G','C'],['G','Hh'],['Hh','C',1]];
+(function buildChain(){const NS='http://www.w3.org/2000/svg';const W=232,Hh=58;
+  const box=k=>{const[x,y]=N[k];return{x,y,w:W,h:Hh};};
+  const edge=(a,b)=>{const A=box(a),B=box(b);const dx=B.x-A.x,dy=B.y-A.y;const t=(o,d)=>{const sx=Math.abs(d[0])>1e-6?(o.w/2)/Math.abs(d[0]):1e9,sy=Math.abs(d[1])>1e-6?(o.h/2)/Math.abs(d[1]):1e9;return Math.min(sx,sy);};
+    const l=Math.hypot(dx,dy),u=[dx/l,dy/l];const ta=t(A,u)+4,tb=t(B,u)+8;return[A.x+u[0]*ta,A.y+u[1]*ta,B.x-u[0]*tb,B.y-u[1]*tb];};
+  EDG.forEach(([a,b,d])=>{const[x1,y1,x2,y2]=edge(a,b);const mx=(x1+x2)/2,my=(y1+y2)/2;const p=document.createElementNS(NS,'path');p.setAttribute('d',`M${x1} ${y1} Q${mx+(a==='G'||b==='C'&&a==='Hh'?0:0)} ${my} ${x2} ${y2}`);p.setAttribute('class','ce'+(d?' dash':''));p.id='e-'+a+b;$('#edges').appendChild(p);});
+  Object.entries(N).forEach(([k,[x,y,t]])=>{const g=document.createElementNS(NS,'g');g.setAttribute('class','cn');g.id='n-'+k;
+    const r=document.createElementNS(NS,'rect');r.setAttribute('x',x-W/2);r.setAttribute('y',y-Hh/2);r.setAttribute('width',W);r.setAttribute('height',Hh);r.setAttribute('rx',8);g.appendChild(r);
+    const words=t.split(' ');const lines=[];let cur='';words.forEach(w=>{if((cur+' '+w).trim().length>26){lines.push(cur.trim());cur=w;}else cur+=' '+w;});lines.push(cur.trim());
+    lines.forEach((ln,i)=>{const tx=document.createElementNS(NS,'text');tx.setAttribute('x',x);tx.setAttribute('y',y+(i-(lines.length-1)/2)*19+5);tx.setAttribute('text-anchor','middle');tx.textContent=ln;g.appendChild(tx);});
+    $('#nodes').appendChild(g);});
+  const TX=[['tG','G',450,198,'Вага · метформін',C.ok],['tB','B',720,104,'Летрозол · кломіфен · гонадотропіни: ФСГ ↑',C.fsh],['tC','C',720,386,'Дрилінг: строма ↓',C.andro],['tE','E',180,392,'Результат: моно-овуляція',C.e2]];
+  TX.forEach(([id,k,x,y,t,c])=>{const g=document.createElementNS(NS,'g');g.setAttribute('class','tx');g.id=id;g.style.setProperty('--tc',c);
+    const tx=document.createElementNS(NS,'text');tx.setAttribute('class','tb');tx.setAttribute('x',x);tx.setAttribute('y',y+5);tx.setAttribute('text-anchor','middle');tx.textContent=t;
+    g.appendChild(tx);$('#txs').appendChild(g);const bb={w:t.length*7.4+24};const r=document.createElementNS(NS,'rect');r.setAttribute('x',x-bb.w/2);r.setAttribute('y',y-13);r.setAttribute('width',bb.w);r.setAttribute('height',26);g.insertBefore(r,tx);});
+})();
+function chainHot(nodes=[],edges=[]){$$('.cn').forEach(n=>n.classList.toggle('hot',nodes.includes(n.id.slice(2))));$$('.ce').forEach(e=>e.classList.toggle('hot',edges.includes(e.id.slice(2))));}
+function chainTx(list){$$('.tx').forEach(t=>t.classList.toggle('on',list.includes(t.id)));}
+
+$('#dL').innerHTML='<i></i>'.repeat(100);$('#dC').innerHTML='<i></i>'.repeat(100);
+/* ---------- chapters ---------- */
+
+
+/* ---------- STEPS ---------- */
+const S=[
+{ch:0,v:'hero',hideH:1,chap:'Доповідь',title:'Репродуктивні проблеми при СПКЯ: від індукції овуляції до ДРТ',big:0,
+ prose:['У цій доповіді ми пройдемо шлях однієї пацієнтки — від діагнозу до вагітності.','Спершу з’ясуємо, <b>чому при синдромі полікістозних яєчників зникає овуляція</b>: побачимо, що це не одне порушення, а замкнене коло, у якому гіпоталамус, гіпофіз, яєчник, жирова тканина й печінка посилюють одне одного.','Потім покажемо, що <b>кожен метод лікування розриває конкретну ланку цього кола</b> — і саме тому методи застосовують у певній послідовності: від зниження маси тіла до екстракорпорального запліднення.'],
+ who:'<b>Злата Артюхова</b>',go(){}},
+
+{ch:0,v:'patient',hideH:1,chap:'Вступ · клінічний випадок',title:'Олена, 29 років: два роки без вагітності',
+ prose:['Олена звернулася зі скаргою на відсутність вагітності протягом двох років регулярного статевого життя. Менструації приходять кожні 40–60 днів, індекс маси тіла — 31 кг/м². Сперма партнера в нормі.','Рідкісний цикл — перша підказка. Регулярна менструація є наслідком овуляції: після неї жовте тіло виробляє прогестерон, а його спад запускає менструацію. Якщо менструації нерегулярні, овуляція, найімовірніше, відбувається рідко або не відбувається взагалі. А без овуляції немає яйцеклітини, яку можна запліднити.','Найчастіша причина такого <b>ановуляторного безпліддя</b> — синдром полікістозних яєчників (СПКЯ), що трапляється у 10–13% жінок репродуктивного віку.'],
+ next:'Спершу підтвердимо діагноз.',go(){}},
+
+{ch:0,v:'us',chap:'Вступ · діагностика',title:'Діагноз: два з трьох Роттердамських критеріїв',
+ prose:['СПКЯ в дорослої жінки діагностують за наявності двох із трьох ознак: <b>оліго- або ановуляції</b>, <b>клінічної чи біохімічної гіперандрогенії</b> та <b>полікістозної морфології яєчників</b> (ПКМЯ) — але лише після виключення станів, що імітують СПКЯ: захворювань щитоподібної залози (ТТГ), гіперпролактинемії, некласичної вродженої гіперплазії кори надниркових залоз (17-OH-прогестерон).','За міжнародною настановою 2023 року ПКМЯ на трансвагінальному УЗД — це <b>20 і більше фолікулів діаметром 2–9 мм</b> хоча б в одному яєчнику. Нове в настанові: у дорослих замість УЗД можна визначати <b>АМГ</b>, адже його виробляють саме ці дрібні фолікули; але не обидва методи разом і не в підлітків.','В Олени є нерегулярний цикл і ПКМЯ — двох критеріїв достатньо.'],
+ next:'Щоб зрозуміти, чому фолікулів так багато, а овуляції немає, згадаймо нормальний цикл.',cite:'Teede et al., Hum Reprod 2023 · рек. 1.4–1.5',
+ h:HP,why:[['amh','↑↑ — його виробляють численні дрібні фолікули; тому АМГ може замінити УЗД'],['lh','часто ↑, але це не діагностичний критерій']],
+ go(){$$('.crit').forEach(c=>c.classList.remove('on'));$('#fcount').textContent='0';
+  T(600,()=>{let n=0;const it=setInterval(()=>{n++;$('#fcount').textContent=n;if(n>=29)clearInterval(it);},60);timers.push(it);});
+  T(900,()=>{callout(59,181,20,468,'Автоматичний підрахунок: діаметр кожного фолікула, мм',C.ok);callout(231,247,300,468,'Фолікули на зрізах яєчника',C.amh);callout(508,294,560,468,'3D-реконструкція всіх фолікулів',C.fsh);});
+  T(2400,()=>$('.crit[data-c="0"]').classList.add('on'));T(2800,()=>$('.crit[data-c="2"]').classList.add('on'));T(3200,()=>$('.crit[data-c="1"]').classList.add('on'));}},
+
+{ch:1,v:'ov',chap:'Розділ I · відправна точка',title:'Норма: як один фолікул виграє конкуренцію',
+ prose:['Гіпоталамус виділяє <b>гонадотропін-рилізинг-гормон (ГнРГ)</b> не постійно, а імпульсами; у відповідь гіпофіз секретує ФСГ і ЛГ. На початку циклу ФСГ «рекрутує» когорту антральних фолікулів.','Фолікул, найчутливіший до ФСГ, росте швидше за інших і виробляє все більше <b>естрадіолу</b>. Естрадіол разом з інгібіном B за механізмом негативного зворотного зв’язку знижує ФСГ — і решта когорти, якій потрібно більше ФСГ, зазнає атрезії. Так формується <b>один домінантний фолікул</b>.','Коли естрадіол досягає піку, зворотний зв’язок стає позитивним: виникає <b>викид ЛГ</b>, відбувається овуляція, а на місці фолікула утворюється жовте тіло, що виробляє прогестерон.','Під сценою — гормональний профіль: він показуватиме на кожному етапі, які гормони змінилися і чому.'],
+ next:'При СПКЯ цей механізм ламається вже на першій ланці — в гіпоталамусі.',
+ h:HN,why:[['fsh','↓ наприкінці фолікулярної фази — гальмування естрадіолом та інгібіном B'],['e2','↑ — його виробляє домінантний фолікул'],['lh','короткий пік перед овуляцією — позитивний зворотний зв’язок від Е2']],
+ go(){ovPCOS(false);const n=L.normal();layout(n);axisFlows(HN);
+  T(500,()=>{callout(84,82,240,30,'Гіпоталамус: імпульси ГнРГ',C.lh);callout(67,150,240,120,'Гіпофіз: ФСГ і ЛГ',C.fsh);});
+  T(1800,()=>{layout(n.map((f,i)=>i===2?{x:OC[0]+Math.cos(-.75)*RX*.78,y:OC[1]+Math.sin(-.75)*RY*.78,r:100,s:'g'}:{...f,r:24,s:'t',op:.85}));setH({e2:80,fsh:32});axisFlows(cur);});
+  T(3000,()=>{const f=fols[2];callout(f.x+20,f.y-35,f.x+60,f.y-120,'Домінантний фолікул<small>~20 мм, джерело естрадіолу</small>',C.e2);callout(fols[5].x,fols[5].y,fols[5].x-40,fols[5].y+100,'Атрезія решти когорти',C.w);});
+  T(4500,()=>{setH({lh:97,e2:88});axisFlows(cur);tag(200,330,'пік ЛГ',C.lh);});
+  T(5600,()=>setF(2,{s:'o'}));
+  T(7000,()=>{setF(2,{s:'c',r:92});setH({lh:42,e2:58,fsh:40});axisFlows(cur);});}},
+
+{ch:1,v:'gnrh',mode:'in',focus:[84,82],chap:'Розділ I · ланка 1 з 5: гіпоталамус',title:'Імпульси ГнРГ частішають',
+ prose:['Частота імпульсів ГнРГ — це код, який визначає, що синтезуватиме гіпофіз: <b>повільні імпульси сприяють синтезу ФСГ, часті — синтезу ЛГ</b>. У нормі прогестерон жовтого тіла сповільнює генератор імпульсів.','При СПКЯ цей гальмівний вплив ослаблений з двох причин. По-перше, без овуляції немає жовтого тіла, отже, мало прогестерону. По-друге, надлишок андрогенів знижує чутливість гіпоталамуса до прогестерону. У результаті генератор працює з постійно високою частотою, і баланс зсувається на користь ЛГ.','Зверніть увагу: одна з причин (ановуляція) водночас є наслідком. Це перша ознака порочного кола.'],
+ next:'Як цей сигнал перетворюється на гормони в гіпофізі?',
+ h:{...HN,lh:72,fsh:38},why:[['lh','↑ — часті імпульси ГнРГ зсувають синтез на користь ЛГ'],[null,'Прогестерону немає — гальмування генератора імпульсів відсутнє']],
+ go(){pulse.period=3.2;$('#pulseCap').textContent='Пульсограма ГнРГ · норма';
+  const term=[F(.41,.6),F(.49,.585),F(.555,.585)];const mk=per=>{clearFx();term.forEach(t=>emit({p:[t,[t[0]-18,t[1]+36],[t[0]-100,t[1]+60],[F(.27,.8)[0],F(.27,.8)[1]]],c1:C.gnrh,pulse:{period:per,count:7},spd:.5,size:7,jit:9}));};mk(3.2);
+  T(600,()=>{callout(...F(.6,.13),720,40,'ГнРГ-нейрони гіпоталамуса',C.lh);callout(...F(.49,.6),640,290,'Аксонні терміналі<small>імпульсний викид ГнРГ</small>',C.gnrh);callout(...F(.33,.74),120,460,'Портальні судини<small>несуть ГнРГ до гіпофіза</small>',C.acc);});
+  T(5000,()=>{pulse.period=1.25;$('#pulseCap').textContent='Пульсограма ГнРГ · СПКЯ: імпульси частіші';mk(1.25);setH({lh:80});});}},
+
+{ch:1,v:'gonad',mode:'in',chap:'Розділ I · ланка 2 з 5: гіпофіз',title:'Гонадотроф: ЛГ переважає над ФСГ',
+ prose:['У гонадотрофах передньої частки гіпофіза часті імпульси ГнРГ посилюють синтез β-субодиниці ЛГ і відносно пригнічують синтез β-субодиниці ФСГ. Тому в крові при СПКЯ часто підвищене співвідношення ЛГ/ФСГ (хоча діагностичним критерієм воно не є).','Ці два гормони мають різні мішені в яєчнику: <b>ЛГ діє на тека-клітини, ФСГ — на гранульозні клітини</b>. Отже, дисбаланс у крові переходить у дисбаланс усередині кожного фолікула: тека отримує надлишковий стимул, а гранульоза — недостатній.'],
+ next:'Подивімося, як ці дві клітини мають працювати разом.',
+ h:{...HN,lh:80,fsh:34},why:[['lh','↑ — гонадотроф виділяє більше ЛГ (фіолетові гранули)'],['fsh','відносно ↓ — синтез ФСГ пригнічений (бірюзові гранули)']],
+ go(){variant('gonad','n');const path=[Q(.6,.6),Q(.66,.7),Q(.74,.78),Q(.88,.9)];
+  emit({p:path,c1:C.lh,rate:15,spd:.32,size:8,jit:12});emit({p:path,c1:C.fsh,rate:4,spd:.32,size:8,jit:12});
+  T(600,()=>{callout(...Q(.33,.33),60,120,'Ядро гонадотрофа',C.lh);callout(...Q(.31,.06),40,30,'Рецептори ГнРГ',C.gnrh);});
+  T(1500,()=>{callout(...Q(.45,.55),60,470,'Секреторні гранули<small><span style="color:var(--fsh)">ФСГ</span> і <span style="color:var(--lh)">ЛГ</span></small>',C.fsh);callout(...Q(.82,.72),840,560,'У кров: ЛГ ≫ ФСГ',C.lh);});}},
+
+{ch:1,v:'cell2',mode:'in',chap:'Розділ I · ланка 3 з 5: стінка фолікула',title:'Норма: дві клітини — два гонадотропіни',
+ prose:['Естрадіол фолікула синтезують дві клітини спільно. <b>Тека-клітини</b> мають рецептори ЛГ і прямий доступ до крові: під дією ЛГ вони перетворюють холестерин на андрогени — переважно андростендіон. Андрогени дифундують крізь базальну мембрану до гранульози.','<b>Гранульозні клітини</b> не мають власних судин і не можуть самі синтезувати андрогени, зате під дією ФСГ експресують <b>ароматазу</b>, яка перетворює андрогени на естрогени. На сцені помаранчеві частинки — андрогени, золоті — естрадіол.','Чим більше естрадіолу у фолікулярній рідині, тим чутливішим до ФСГ стає фолікул. Ця позитивна петля і робить фолікул домінантним.'],
+ next:'Тепер — що змінюється в цій системі при СПКЯ.',
+ h:HN,why:[['e2','синтезується в гранульозі з андрогенів теки — потрібні і ЛГ, і ФСГ']],
+ go(){variant('cell2','n');
+  emit({p:[F(.1,.55),F(.16,.52),F(.22,.5),F(.29,.48)],c1:C.lh,rate:6,spd:.45,size:7,jit:12});
+  emit({p:[F(.08,.2),F(.25,.05),F(.45,.12),F(.6,.3)],c1:C.fsh,rate:5,spd:.35,size:7,jit:12});
+  emit({p:[F(.32,.5),F(.5,.52),F(.72,.52),F(.97,.42)],c1:C.andro,c2:C.e2,conv:.95,convAt:.42,rate:10,spd:.22,size:8,jit:16});
+  T(600,()=>{callout(...F(.12,.42),40,30,'Капіляр',C.acc);callout(...F(.30,.47),230,30,'Тека-клітина<small>ЛГ → андрогени</small>',C.andro);});
+  T(1600,()=>{callout(...F(.415,.72),300,570,'Базальна мембрана',C.w);callout(...F(.64,.36),600,30,'Гранульозна клітина<small>ФСГ → ароматаза</small>',C.fsh);});
+  T(2600,()=>callout(...F(.92,.62),860,570,'Фолікулярна рідина: естрадіол',C.e2));}},
+
+{ch:1,v:'cell2',chap:'Розділ I · ланка 3 з 5: стінка фолікула',title:'СПКЯ: тека перевантажена, гранульоза не встигає',
+ prose:['При СПКЯ обидві клітини працюють неправильно. Тека отримує <b>подвійний стимул</b>: надлишок ЛГ і гіперінсулінемію (сині частинки) — інсулін діє як ко-гонадотропін і посилює ферменти синтезу андрогенів. До того ж тека-клітини жінок із СПКЯ мають вроджену схильність до надмірного стероїдогенезу.','Гранульоза ж отримує замало ФСГ, а <b>високий АМГ</b>, який виробляють численні дрібні фолікули, додатково пригнічує ароматазу. Тому андрогени не встигають перетворитися на естрадіол і накопичуються. Андрогенне мікрооточення гальмує дозрівання — <b>фолікули зупиняються на 2–9 мм</b>.','Чим більше таких фолікулів, тим вищий АМГ і тим сильніше гальмування — ще одне замкнене коло.'],
+ next:'Звідки береться надлишок інсуліну?',
+ h:{...HP,ins:70},why:[['andro','↑↑ — ЛГ та інсулін посилюють синтез у теці'],['amh','↑↑ — пригнічує ароматазу гранульози'],['e2','без циклічного піку — ароматаза працює слабко']],
+ go(){variant('cell2','p');
+  emit({p:[F(.1,.55),F(.16,.52),F(.22,.5),F(.29,.48)],c1:C.lh,rate:14,spd:.5,size:7,jit:12});
+  emit({p:[F(.1,.78),F(.17,.74),F(.23,.66),F(.29,.6)],c1:C.ins,rate:10,spd:.45,size:7,jit:10});
+  emit({p:[F(.08,.2),F(.25,.05),F(.45,.12),F(.6,.3)],c1:C.fsh,rate:1.5,spd:.35,size:7,jit:12});
+  emit({p:[F(.32,.5),F(.5,.52),F(.72,.52),F(.97,.42)],c1:C.andro,c2:C.e2,conv:.25,convAt:.42,stop:[.3,.6],hold:3,rate:22,spd:.22,size:8,jit:22});
+  T(600,()=>callout(...F(.3,.47),230,30,'Тека: ЛГ ↑ + інсулін → андрогени ↑↑',C.andro));
+  T(1600,()=>callout(...F(.64,.36),600,30,'Гранульоза: мало ФСГ, АМГ ↑ → ароматаза ↓',C.amh));
+  T(2600,()=>callout(...F(.92,.62),860,570,'Андрогенне середовище: ріст зупиняється',C.warn));}},
+
+{ch:1,v:'ins',mode:'in',chap:'Розділ I · ланка 4 з 5: інсулін',title:'Інсулінорезистентність — але вибіркова',
+ prose:['Інсулінорезистентність виявляють у більшості жінок із СПКЯ — і з ожирінням, і в частини жінок з нормальною масою тіла; ожиріння її суттєво посилює.','На сцені — мембрана клітини. Інсуліну багато, рецептори зайняті, але внутрішньоклітинний сигнал слабкий, і до мембрани переміщується мало везикул з транспортером глюкози <b>GLUT4</b>. Щоб утримати глікемію, підшлункова залоза виділяє дедалі більше інсуліну — розвивається <b>гіперінсулінемія</b>.','Ключовий парадокс: метаболічна відповідь на інсулін знижена, а стероїдогенна дія в тека-клітинах, як вважають, збережена. Тож надлишковий інсулін, не допомагаючи засвоєнню глюкози, продовжує стимулювати синтез андрогенів у яєчнику.'],
+ next:'Інсулін підвищує андрогени ще й опосередковано — через печінку.',
+ h:HP,why:[['ins','↑↑ — компенсаторна гіперсекреція у відповідь на резистентність'],['andro','↑ — інсулін стимулює теку як ко-гонадотропін']],
+ go(){[[.18,.25],[.38,.22],[.62,.22],[.8,.22]].forEach(([x,y])=>emit({p:[F(x+.06,-.05),F(x+.04,.05),F(x+.02,.13),F(x,y)],c1:C.ins,rate:5,spd:.5,size:9,jit:14,stop:[.97,1],hold:.6}));
+  emit({p:[F(.38,.5),F(.37,.6),F(.34,.7),F(.31,.8)],c1:C.e2,rate:1.2,spd:.18,size:5,jit:3});
+  T(600,()=>callout(...F(.55,.1),720,30,'Інсулін — у надлишку',C.ins));
+  T(1400,()=>callout(...F(.61,.42),820,270,'Рецептор інсуліну',C.lh));
+  T(2200,()=>callout(...F(.31,.83),110,570,'Везикула з GLUT4<small>переміщується мало</small>',C.e2));}},
+
+{ch:1,v:'shbg',chap:'Розділ I · ланка 5 з 5: печінка і кров',title:'Менше ГЗСГ — більше вільного тестостерону',
+ prose:['Більша частина тестостерону в крові зв’язана з <b>глобуліном, що зв’язує статеві гормони (ГЗСГ)</b>, і тому неактивна. Біологічно діє лише вільна фракція.','Синтез ГЗСГ у гепатоцитах пригнічується інсуліном. Тому при гіперінсулінемії ГЗСГ знижується, і частка вільного тестостерону зростає навіть без збільшення загального рівня. Клінічно це проявляється гірсутизмом та акне, лабораторно — підвищеним індексом вільних андрогенів.','Так метаболічне порушення — інсулінорезистентність — перетворюється на ендокринне: гіперандрогенію.'],
+ next:'Зведімо всі п’ять ланок в одну схему.',
+ h:HP,why:[['andro','↑ — вільна фракція зростає через нестачу ГЗСГ'],['ins','↑↑ — пригнічує синтез ГЗСГ у печінці']],
+ go(){emit({p:[F(.04,.55),F(.3,.5),F(.6,.38),F(.95,.3)],c1:C.andro,rate:12,spd:.12,size:7,jit:60});
+  T(600,()=>callout(...F(.29,.63),120,570,'ГЗСГ, що зв’язує тестостерон',C.lh));
+  T(1500,()=>callout(...F(.38,.43),360,30,'Вільний тестостерон<small>біологічно активна фракція</small>',C.andro));}},
+
+{ch:1,v:'chain',chap:'Розділ I · підсумок',title:'Порочне коло СПКЯ',
+ prose:['Тепер видно, чому СПКЯ сам себе підтримує. Часті імпульси ГнРГ підвищують ЛГ; ЛГ разом з інсуліном змушує теку виробляти надлишок андрогенів; андрогени й АМГ зупиняють ріст фолікулів; без домінантного фолікула немає овуляції, а без овуляції — прогестерону, який мав би сповільнити ГнРГ. <b>Коло замикається.</b>','Інсулінорезистентність підживлює його збоку — через теку і через печінку. Результат на рівні органа — десятки зупинених фолікулів по периферії яєчника і гіперплазована строма. На рівні ендометрія — тривала дія естрогенів без прогестерону, що підвищує ризик гіперплазії ендометрія.','Звідси логіка лікування: <b>щоб відновити овуляцію, достатньо розірвати коло хоча б в одній ланці</b>.'],
+ next:'Розділ II: де і як можна розірвати це коло.',
+ h:HP,why:[[null,'Профіль СПКЯ: ЛГ, андрогени, інсулін і АМГ підвищені; циклічного піку Е2 немає']],
+ go(){chainHot([]);chainTx([]);const ord=['A','B','C','D','E','Fn'];ord.forEach((k,i)=>T(400+i*650,()=>{chainHot(ord.slice(0,i+1),ord.slice(0,i).map((a,j)=>a+ord[j+1]));}));
+  T(4600,()=>chainHot([...ord,'G','Hh'],['AB','BC','CD','DE','EFn','FnA','GC','GHh','HhC']));}},
+
+{ch:2,v:'chain',chap:'Розділ II · як відновити овуляцію',title:'Де можна розірвати коло',
+ prose:['Кожен метод лікування втручається в конкретну ланку. <b>Зниження маси тіла і метформін</b> зменшують інсулін і послаблюють коло збоку. <b>Летрозол і кломіфен</b> підвищують власний ФСГ пацієнтки, а <b>гонадотропіни</b> вводять ФСГ ззовні — так фолікул отримує достатній стимул, щоб подолати поріг і стати домінантним. <b>Лапароскопічний дрилінг</b> прибирає частину андроген-продукуючої строми.','Мета всіх методів одна — <b>моно-овуляція</b>: один зрілий фолікул і, в ідеалі, одна дитина. Методи застосовують послідовно — від найпростішого й найбезпечнішого до складнішого, як рекомендує міжнародна настанова 2023 року.'],
+ next:'Почнемо з основи — маси тіла та інсуліну.',cite:'Teede et al., 2023 · алгоритм 2',
+ h:HP,why:[],
+ go(){chainHot(['A','B','C','D','E','Fn','G','Hh'],[]);chainTx([]);['tG','tB','tC','tE'].forEach((t,i)=>T(500+i*900,()=>chainTx(['tG','tB','tC','tE'].slice(0,i+1))));}},
+
+{ch:2,v:'adip',mode:'in',chap:'Розділ II · крок 0: спосіб життя',title:'Маса тіла як терапевтична мішень',
+ prose:['Гіпертрофовані вісцеральні адипоцити виділяють вільні жирні кислоти та прозапальні цитокіни, що поглиблюють інсулінорезистентність.','Зниження маси тіла лише на <b>5–10%</b> зменшує розмір адипоцитів і запалення, підвищує чутливість до інсуліну. Далі ефект іде по ланцюгу: інсулін знижується → печінка синтезує більше ГЗСГ → вільного тестостерону менше → тека отримує менший стимул. У частини жінок цього достатньо, щоб <b>овуляція відновилася без препаратів</b>.','Тому до початку індукції Олені рекомендують зміну способу життя, фолієву кислоту (при ІМТ понад 30 — у вищій дозі), скринінг порушень вуглеводного обміну та контроль артеріального тиску.'],
+ next:'Якщо цього недостатньо, на ту саму ланку можна вплинути медикаментозно.',cite:'Teede et al., 2023 · рек. 5.1',
+ h:HP,why:[['ins','↓ після схуднення — чутливість до інсуліну зростає'],['andro','↓ — більше ГЗСГ і менший стимул теки']],
+ go(){variant('adip','n');
+  T(600,()=>{callout(...F(.38,.45),200,40,'Гіпертрофований адипоцит',C.e2);callout(...F(.56,.27),720,40,'Імунні клітини: хронічне запалення',C.lh);});
+  T(3600,()=>{variant('adip','a');clearLabels();tag(450,30,'−5–10% маси тіла',C.ok);setH({ins:58,andro:66,lh:70,fsh:38});});}},
+
+{ch:2,v:'liver',chap:'Розділ II · крок 0: метформін',title:'Метформін: менше глюкози з печінки',
+ prose:['Метформін діє насамперед у печінці: <b>пригнічує глюконеогенез</b>, тож гепатоцити виділяють у кров менше глюкози (світлі частинки, що прямують до центральної вени). Зростає й периферична чутливість до інсуліну.','Підшлунковій залозі вже не потрібно підтримувати гіперінсулінемію — рівень інсуліну знижується, а за ним і андрогени.','Проте як самостійний засіб індукції овуляції метформін <b>слабший за летрозол</b>: він впливає лише на «бічну» ланку кола і не підвищує безпосередньо ФСГ. Тому настанова розглядає його для окремих пацієнток, у комбінації з кломіфеном і особливо — за порушень вуглеводного обміну.'],
+ next:'Щоб прямо дати фолікулу достатньо ФСГ, потрібен препарат першої лінії.',cite:'Teede et al., 2023 · рек. 5.4',
+ h:{fsh:38,lh:70,e2:46,andro:66,ins:58,amh:86},why:[['ins','↓ — менше глюкози з печінки, вища чутливість тканин'],['andro','↓ — слабший стимул теки, більше ГЗСГ']],
+ go(){const g=emit({p:[F(.72,.52),F(.64,.4),F(.55,.28),F(.47,.21)],c1:C.glu,rate:14,spd:.3,size:7,jit:16});
+  T(500,()=>{callout(...F(.72,.52),840,570,'Гепатоцит: глюконеогенез',C.e2);callout(...F(.47,.21),300,30,'Центральна вена → системний кровотік',C.ins);});
+  T(2400,()=>{drug({left:'14px',bottom:'14px'},{n:'Метформін',g:'бігуанід',d:'<b>Мішень:</b> глюконеогенез у печінці<br><b>Ефект:</b> інсулін ↓ → андрогени ↓',c:C.ok,img:'tablets'});g.rate=3;setH({ins:48,andro:60});});}},
+
+{ch:2,v:'arom',mode:'in',chap:'Розділ II · 1-ша лінія',title:'Летрозол: блок ароматази',
+ prose:['<b>Летрозол</b> — нестероїдний інгібітор ароматази (CYP19A1). Він оборотно займає активний центр ферменту, і андрогени перестають перетворюватися на естрогени — рівень естрадіолу різко падає.','Важливо, <b>де саме</b> діє препарат: він знижує синтез естрогену, але не блокує естрогенові рецептори. Тканини, яким потрібен естроген, після відміни отримують його знову.','Період напіввиведення — близько двох діб, тож після стандартного п’ятиденного курсу блок швидко зникає.'],
+ next:'Як падіння естрадіолу запускає ріст фолікула — на рівні всієї осі.',cite:'Teede et al., 2023 · рек. 5.3.1',
+ h:{fsh:38,lh:66,e2:46,andro:66,ins:58,amh:86},why:[['e2','↓ — ароматазу заблоковано, андрогени не перетворюються']],
+ go(){const a=emit({p:[F(.08,.12),F(.25,.2),F(.4,.32),F(.5,.4)],c1:C.andro,rate:7,spd:.4,size:9,jit:18});const e=emit({p:[F(.53,.4),F(.65,.3),F(.8,.2),F(.98,.14)],c1:C.e2,rate:7,spd:.4,size:9,jit:18});
+  T(500,()=>{callout(...F(.5,.4),640,250,'Ароматаза: андроген → естроген',C.e2);callout(...F(.3,.75),140,570,'Мембрана гранульозної клітини',C.w);});
+  T(2400,()=>{drug({right:'14px',bottom:'14px'},{n:'Летрозол',g:'нестероїдний інгібітор ароматази',d:'<b>Доза:</b> 2,5 мг/добу, 3–7 день циклу; до 7,5 мг<br><b>T½:</b> ≈ 2 доби',c:C.let,img:'tablets'});
+   emit({p:[F(.2,-.05),F(.3,.1),F(.44,.28),F(.5,.38)],c1:C.let,rate:7,spd:.5,size:10,jit:12,stop:[.98,1],hold:4});});
+  T(3300,()=>{e.on=false;a.stop=[.95,1];a.hold=1.5;setH({e2:16});});}},
+
+{ch:2,v:'ov',mode:'out',chap:'Розділ II · 1-ша лінія',title:'Летрозол: як падіння Е2 запускає ріст одного фолікула',
+ prose:['Гіпоталамус і гіпофіз «читають» рівень естрадіолу як сигнал зворотного зв’язку. Коли Е2 різко знижується, гальмування знімається — <b>зростає секреція ГнРГ і ФСГ</b>. Підвищений ФСГ перевищує поріг найбільш чутливого фолікула, і той починає рости.','Після відміни летрозолу естрадіол, який тепер виробляє цей фолікул, знову гальмує ФСГ, і решта когорти, не отримавши достатнього стимулу, атрезує. Саме короткий період дії забезпечує переважно <b>моно-фолікулярну відповідь</b>.','Ріст контролюють за УЗД: фолікул діаметром 18–20 мм готовий до овуляції — спонтанної або запущеної тригером.'],
+ next:'Альтернатива — кломіфен. Він теж підвищує ФСГ, але іншим шляхом.',cite:'Teede et al., 2023 · рек. 5.3–5.4',
+ h:{fsh:38,lh:66,e2:16,andro:66,ins:58,amh:86},why:[['fsh','↑ — зникло гальмування з боку Е2'],['e2','спершу ↓ (блок), потім ↑ — його виробляє домінантний фолікул']],
+ go(){ovPCOS(true);layout(L.pcos());aglow(.5);axisFlows(cur,{e2Off:true});
+  T(500,()=>tag(270,95,'Е2 не надходить — гальмування зняте',C.warn));
+  T(1500,()=>{setH({fsh:80});axisFlows(cur,{e2Off:true});});
+  T(2800,()=>{const p=L.pcos();p[DOM]=domAt(60,.84);layout(p);});
+  T(4300,()=>{clearLabels();const p=L.pcos();p[DOM]=domAt(100,.72);layout(p);setH({fsh:52,e2:68});axisFlows(cur);if(REAL.us_dom){$('#usDomBox').style.opacity=1;$('#usDomSrc').style.opacity=1;}});
+  T(5300,()=>{const f=fols[DOM];callout(f.x+10,f.y-40,f.x+20,f.y-150,'Домінантний фолікул 18–20 мм',C.e2);});}},
+
+{ch:2,v:'er',mode:'in',chap:'Розділ II · альтернатива першої лінії',title:'Кломіфен: блок рецептора, а не синтезу',
+ prose:['<b>Кломіфену цитрат</b> — селективний модулятор естрогенових рецепторів. Він займає рецептори в гіпоталамусі, і той сприймає ситуацію як дефіцит естрогену, хоча естрадіолу в крові достатньо. У відповідь зростають ГнРГ і ФСГ — мета та сама, що й у летрозолу.','Але є дві важливі відмінності. Перша: препарат складається з двох ізомерів, і <b>зукломіфен</b> має дуже довгий період напіввиведення та накопичується від циклу до циклу. Друга: рецептори блокуються не лише в мозку, а й у <b>периферичних тканинах-мішенях</b>.'],
+ next:'Наслідки цієї периферичної блокади видно в ендометрії та шийці матки.',
+ h:{fsh:38,lh:66,e2:46,andro:66,ins:58,amh:86},why:[['fsh','↑ — гіпоталамус «бачить» дефіцит естрогену'],['e2','не знижений — синтез не порушено, заблоковано рецептор']],
+ go(){variant('er','n');emit({p:[Q(.1,.05),Q(.25,.12),Q(.42,.28),Q(.54,.41)],c1:C.e2,rate:4,spd:.4,size:9,jit:16,stop:[.97,1],hold:.5});
+  T(500,()=>{callout(...Q(.54,.41),800,150,'Естрадіол у кишені рецептора',C.e2);callout(...Q(.22,.61),60,520,'ДНК: запуск транскрипції',C.acc);});
+  T(3200,()=>{variant('er','c');clearFx();clearLabels();drug({left:'14px',top:'14px'},{n:'Кломіфен',g:'селективний модулятор естрогенових рецепторів',d:'<b>Доза:</b> 50–150 мг/добу, 5 днів<br><b>Особливість:</b> зукломіфен накопичується',c:C.clo,img:'tablets'});
+   emit({p:[Q(.1,.05),Q(.25,.12),Q(.4,.24),Q(.5,.33)],c1:C.clo,rate:4,spd:.4,size:10,jit:16,stop:[.97,1],hold:3});setH({fsh:72});});
+  T(4200,()=>callout(...Q(.5,.33),800,300,'Рецептор зайнятий кломіфеном: сигнал естрогену не передається',C.clo));}},
+
+{ch:2,v:'clp',chap:'Розділ II · ціна блокади рецепторів',title:'Ендометрій і цервікальний слиз',
+ prose:['Ендометрію для проліферації потрібен естрогенний сигнал. Коли рецептори зайняті кломіфеном, <b>функціональний шар залишається тонким</b> — гірші умови для імплантації.','Те саме в шийці матки: замість рідкого прозорого слизу з каналами для руху сперматозоїдів утворюється <b>густий слиз</b>, крізь який сперматозоїдам важко пройти.','Тож на кломіфені овуляція може відбуватися, а вагітність — ні. Це пояснює розрив між частотою овуляції та частотою вагітностей і те, чому кломіфен поступився першою лінією летрозолу.'],
+ next:'Чи підтверджує це рандомізоване дослідження?',
+ h:{fsh:72,lh:62,e2:66,andro:66,ins:58,amh:86},why:[['e2','у крові нормальний або високий, але тканини його «не бачать»']],
+ go(){variant('clp',['en','mf']);
+  T(400,()=>{tag(255,30,'Ендометрій',C.acc);tag(710,22,'Цервікальний слиз',C.ice);});
+  T(1100,()=>{callout(255,130,255,440,'Проліферативний ендометрій: залози, спіральні артерії',C.acc);callout(710,230,710,440,'Канали для руху сперматозоїдів',C.ice);});
+  T(3800,()=>{variant('clp',['et','mh']);clearLabels();tag(255,30,'Ендометрій тоншає',C.warn);tag(710,22,'Слиз густий, каналів немає',C.warn);});}},
+
+{ch:2,v:'legro',chap:'Розділ II · доказова база',title:'Летрозол проти кломіфену: дані RCT',
+ prose:['Ключове дослідження — <b>PPCOS II</b> (Legro et al., NEJM 2014): 750 жінок із СПКЯ та безпліддям, до п’яти циклів лікування.','Кумулятивне живонародження склало <b>27,5% на летрозолі проти 19,1% на кломіфені</b>; овуляція — 61,7% проти 48,3% циклів.','Різниця відповідає механізму: обидва препарати підвищують ФСГ, але летрозол не блокує периферичні рецептори естрогену. На підставі цих та інших даних настанова 2023 року рекомендує летрозол препаратом першої лінії.'],
+ next:'Але в частини жінок, як в Олени, овуляції немає навіть на максимальній дозі.',cite:'Legro et al., N Engl J Med 2014;371:119–129',
+ h:{fsh:52,lh:62,e2:68,andro:66,ins:58,amh:86},why:[],
+ go(){const dl=$$('#dL i'),dc=$$('#dC i');[...dl,...dc].forEach(d=>d.classList.remove('on'));$$('#lgBars .bar i').forEach(b=>b.style.width=0);
+  for(let i=0;i<28;i++)T(300+i*45,()=>dl[i].classList.add('on'));for(let i=0;i<19;i++)T(300+i*45,()=>dc[i].classList.add('on'));
+  T(1800,()=>$$('#lgBars .bar i').forEach(b=>b.style.width=(b.dataset.w*(b.dataset.s||1))+'%'));}},
+
+{ch:2,v:'fork',chap:'Розділ II · друга лінія',title:'Резистентність до першої лінії',
+ prose:['Олена отримала три цикли летрозолу з підвищенням дози до 7,5 мг — овуляції не було. Це <b>резистентність</b>: власного ФСГ, навіть підсиленого, недостатньо, щоб жоден фолікул подолав поріг. Якщо ж овуляція є, а вагітності немає, треба шукати інші фактори безпліддя.','Настанова пропонує дві опції другої лінії, які розривають коло в різних місцях. <b>Гонадотропіни</b>: вводимо ФСГ ззовні й самі керуємо силою стимулу. <b>Лапароскопічний дрилінг</b>: зменшуємо джерело андрогенів у самому яєчнику. Вибір залежить від клінічної ситуації, доступності та переваг пацієнтки.'],
+ next:'Розглянемо обидва варіанти — спершу гонадотропіни.',cite:'Teede et al., 2023 · рек. 5.5–5.6',
+ h:{fsh:40,lh:76,e2:42,andro:78,ins:60,amh:88},why:[[null,'Профіль СПКЯ зберігається — летрозол не подолав поріг ФСГ']],go(){}},
+
+{ch:2,v:'ov',chap:'Розділ II · друга лінія, варіант А',title:'Гонадотропіни: потрапити у вузьке «вікно» ФСГ',
+ prose:['Кожен фолікул має власний <b>поріг чутливості до ФСГ</b>: він починає рости лише тоді, коли концентрація ФСГ перевищує цей поріг. При СПКЯ фолікулів багато й пороги в них близькі, тому різниця між дозою, яка запускає ріст одного фолікула, і дозою, що запускає ріст багатьох, дуже мала.','Тому застосовують <b>низькодозовий покроковий протокол (low-dose step-up)</b>: невелика стартова доза ФСГ і обережне підвищення лише тоді, коли відповіді немає. Так поріг перетинає один, найчутливіший фолікул.','Обов’язковий УЗД-моніторинг: якщо <b>більше двох фолікулів перевищують 14 мм</b>, цикл скасовують через ризик багатоплідної вагітності та СГЯ.'],
+ next:'Інший шлях — не додавати ФСГ, а прибрати джерело андрогенів.',cite:'Teede et al., 2023 · рек. 5.5.5–5.5.10',
+ h:{fsh:40,lh:66,e2:42,andro:74,ins:60,amh:88},why:[['fsh','↑ — вводиться ззовні, дозу підвищують поступово'],['e2','↑ — його виробляє фолікул, що переступив поріг']],
+ go(){ovPCOS(true);layout(L.pcos());aglow(.5);axisFlows(cur,{insOff:true});
+  T(300,()=>drug({left:'14px',bottom:'14px'},{n:'ФСГ',g:'рекомбінантний або сечовий гонадотропін',d:'<b>Схема:</b> low-dose step-up<br><b>Старт:</b> 37,5–75 МО/добу',c:C.fsh,img:'fsh_pen'}));
+  T(2000,()=>{setH({fsh:70});axisFlows(cur,{insOff:true});const p=L.pcos();p[DOM]=domAt(56,.84);layout(p);});
+  T(3600,()=>{const p=L.pcos();p[DOM]=domAt(90,.74);p[9]={...ring(9,22,.9),r:58,s:'a'};p[15]={...ring(15,22,.9),r:48,s:'a'};layout(p);setH({e2:66});});
+  T(5000,()=>{const a=fols[DOM],b=fols[9],c=fols[15];tag(a.x,a.y-56,'17 мм',C.e2);tag(b.x+44,b.y,'13 мм',C.w);tag(c.x-40,c.y,'11 мм',C.w);});
+  T(6000,()=>tag(OC[0]+60,OC[1],'Лише один фолікул &gt;14 мм — цикл продовжуємо',C.ok));}},
+
+{ch:2,v:'drill',chap:'Розділ II · друга лінія, варіант Б',title:'Лапароскопічний дрилінг яєчників',
+ prose:['Під час лапароскопії електродом роблять кілька — зазвичай близько чотирьох — <b>точкових коагуляцій строми</b> кожного яєчника. Руйнується частина андроген-продукуючої тканини, знижуються інтраоваріальні андрогени та інгібін.','Слідом знижується ЛГ і зростає ФСГ: фолікули отримують кращий стимул, і <b>овуляція відновлюється</b> — часто впродовж кількох циклів, а не одного.','Перевага — моно-овуляція без ризику СГЯ та багатоплідності і без інтенсивного моніторингу. Недоліки — хірургічне втручання з анестезією, ризик спайок і можливе зниження оваріального резерву; при надмірній масі тіла ризики вищі.'],
+ next:'Якщо і друга лінія не допомогла — Розділ III: ЕКЗ.',cite:'Teede et al., 2023 · рек. 5.6',
+ h:{fsh:40,lh:76,e2:42,andro:80,ins:60,amh:88},why:[['andro','↓ — зруйновано частину строми, що їх виробляє'],['lh','↓ — секреція нормалізується після зменшення андрогенів'],['fsh','↑ — знижується інгібін']],
+ go(){$$('.burn').forEach(b=>b.classList.remove('on'));const sc=$('#scope');sc.style.top='-126px';sc.style.transform='translate(500px,-400px)';
+  T(400,()=>{callout(273,248,600,40,'Потовщена біла капсула',C.w);callout(156,326,60,560,'Фолікули під капсулою',C.amh);});
+  const pts=[[180,250],[300,200],[390,290],[250,370]];
+  pts.forEach((p,i)=>{T(1500+i*900,()=>{sc.style.transform=`translate(${p[0]-184}px,${p[1]-250}px)`;});T(2100+i*900,()=>$$('.burn')[i].classList.add('on'));});
+  T(5400,()=>{sc.style.transform='translate(500px,-400px)';setH({andro:52,lh:52,amh:62,fsh:52});callout(390,290,620,470,'Точка коагуляції строми',C.andro);});}},
+
+{ch:3,v:'hyper',chap:'Розділ III · ЕКЗ / ІКСІ',title:'Чому яєчник при СПКЯ відповідає надмірно',
+ prose:['Якщо перша й друга лінії не дали результату або є інші показання — трубний чи чоловічий фактор, — переходять до <b>ЕКЗ/ІКСІ</b>. Тут мета протилежна: потрібен не один фолікул, а кілька.','І саме тут СПКЯ стає ризиком. Антральних фолікулів дуже багато (звідси високий АМГ), і всі вони чутливі до ФСГ. Дози ФСГ для ЕКЗ «рятують» від атрезії більшу частину когорти. Яєчники збільшуються, естрадіол досягає дуже високих значень.','Головна загроза — <b>синдром гіперстимуляції яєчників (СГЯ)</b>.'],
+ next:'Щоб зрозуміти, як запобігти СГЯ, розберемо його механізм.',cite:'Teede et al., 2023 · рек. 5.7.0',
+ h:{fsh:92,lh:50,e2:96,andro:74,ins:60,amh:88},why:[['fsh','↑↑ — високі дози екзогенного ФСГ'],['e2','↑↑ — його виробляють десятки фолікулів одночасно']],
+ go(){T(500,()=>callout(408,178,250,30,'Численні фолікули 14–20 мм',C.e2));T(1300,()=>callout(89,346,60,560,'Маткова труба',C.w));T(2000,()=>callout(450,290,640,560,'Розширені судини поверхні',C.acc));}},
+
+{ch:3,v:'vegf',mode:'in',chap:'Розділ III · механізм СГЯ',title:'ХГЛ → VEGF → проникність судин',
+ prose:['Пусковим чинником СГЯ є <b>ХГЛ</b>. Його вводять як тригер дозрівання ооцитів, і через довгий період напіввиведення він кілька днів стимулює численні жовті тіла, що утворилися з десятків фолікулів.','Гранульозно-лютеїнові клітини у відповідь виділяють <b>VEGF</b> — фактор росту ендотелію судин. VEGF послаблює міжклітинні контакти ендотелію, і плазма виходить із судинного русла в «третій простір».','Звідси клініка: збільшені яєчники, асцит, іноді гідроторакс, гемоконцентрація з ризиком тромбозів, олігурія. Рання СГЯ розвивається через 3–9 днів після тригера ХГЛ, пізня — під дією ендогенного ХГЛ, якщо настала вагітність.'],
+ next:'Профілактика СГЯ розриває саме цей ланцюг: ХГЛ → жовті тіла → VEGF.',
+ h:{fsh:30,lh:30,e2:96,andro:70,ins:60,amh:88},why:[['e2','↑↑ — маркер численних фолікулів і жовтих тіл'],[null,'ХГЛ: тривала лютеотропна стимуляція → VEGF ↑']],
+ go(){variant('vegf','n');const v=emit({p:[F(.38,.45),F(.45,.5),F(.52,.5),F(.6,.46)],c1:C.vegf,rate:6,spd:.35,size:7,jit:18});
+  T(500,()=>{callout(...F(.27,.35),120,30,'Гранульозно-лютеїнова клітина',C.e2);callout(...F(.45,.5),420,570,'VEGF',C.vegf);callout(...F(.62,.45),720,30,'Ендотелій капіляра',C.acc);});
+  T(3400,()=>{variant('vegf','l');clearLabels();v.rate=20;emit({p:[F(.6,.56),F(.53,.62),F(.46,.68),F(.38,.78)],c1:C.plasma,rate:14,spd:.3,size:8,jit:20});callout(...F(.55,.6),720,570,'Щілини між ендотеліоцитами: плазма виходить із судини',C.ice);});
+  T(6600,()=>{showView('ohss','out');clearFx();clearLabels();T(800,()=>{callout(...F(.15,.45),120,40,'Збільшені яєчники',C.e2);callout(...F(.85,.45),780,40,'Збільшений яєчник',C.e2);callout(...F(.5,.55),560,570,'Матка',C.acc);});});}},
+
+{ch:3,v:'gonad',mode:'in',chap:'Розділ III · профілактика СГЯ, крок 1',title:'Протокол з антагоністом ГнРГ',
+ prose:['Під час стимуляції потрібно запобігти передчасному піку ЛГ. <b>Антагоніст ГнРГ</b> робить це конкурентною блокадою рецепторів на гонадотрофах — швидко, без початкового «спалаху» секреції.','Принципово важливо, що гіпофіз при цьому <b>залишається чутливим до ГнРГ</b>. Саме це відкриває можливість замінити ХГЛ тригером агоністом ГнРГ. У довгому протоколі з агоністом гіпофіз десенситизований, і такий тригер не спрацює.','Тому настанова рекомендує при СПКЯ протокол з антагоністом.'],
+ next:'Наступний крок — сам тригер.',cite:'Teede et al., 2023 · рек. 5.7.1',
+ h:{fsh:88,lh:14,e2:92,andro:70,ins:60,amh:88},why:[['lh','↓ — рецептори ГнРГ заблоковано, передчасного піку немає']],
+ go(){variant('gonad','b');T(400,()=>drug({right:'14px',top:'14px'},{n:'Антагоніст ГнРГ',g:'конкурентний блокатор рецептора ГнРГ',d:'<b>Ефект:</b> немає передчасного піку ЛГ<br><b>Гіпофіз:</b> зберігає чутливість',c:C.warn,img:'fsh_pen'}));
+  T(1200,()=>{callout(...Q(.31,.06),40,30,'Рецептори ГнРГ заблоковано',C.warn);callout(...Q(.45,.55),60,470,'Гранули ЛГ не вивільняються',C.lh);});}},
+
+{ch:3,v:'clreg',chap:'Розділ III · профілактика СГЯ, крок 2',title:'Тригер агоністом ГнРГ',
+ prose:['Агоніст ГнРГ витісняє антагоніст із рецепторів і викликає <b>короткий ендогенний пік ЛГ і ФСГ</b> — достатній для завершального дозрівання ооцитів.','Але цей пік триває близько доби, тоді як ХГЛ діє кілька днів. Без тривалої лютеотропної підтримки <b>жовті тіла швидко регресують</b>, синтез VEGF падає — і ризик ранньої СГЯ майже зникає.','Ціна — неповноцінна лютеїнова фаза: свіже перенесення в такому циклі менш успішне. Тому логічний наступний крок — заморозити всі ембріони.'],
+ next:'Крок 3: freeze-all.',cite:'Teede et al., 2023 · рек. 5.7.2 (сильна рекомендація)',
+ h:{fsh:30,lh:90,e2:70,andro:66,ins:60,amh:88},why:[['lh','короткий пік (~1 доба), потім ↓'],['e2','↓ — жовті тіла регресують']],
+ go(){$('#hcgC').style.strokeDashoffset=520;$('#agoC').style.strokeDashoffset=520;T(300,()=>{$('#hcgC').style.strokeDashoffset=0;$('#agoC').style.strokeDashoffset=0;});
+  T(1100,()=>callout(...F(.35,.35),280,30,'Жовте тіло після ХГЛ: багато судин, VEGF',C.warn));
+  T(2300,()=>{callout(...F(.78,.5),760,30,'Після тригера агоністом: регрес',C.lh);setH({lh:20,e2:40});});}},
+
+{ch:3,v:'chen',chap:'Розділ III · профілактика СГЯ, крок 3',title:'Freeze-all: що показують дані',
+ prose:['Стратегія <b>freeze-all</b> — кріоконсервація всіх ембріонів і перенесення в наступному, «спокійному» циклі — усуває і пізню СГЯ: якщо в циклі стимуляції немає вагітності, немає й ендогенного ХГЛ.','Ефект підтвердило RCT Chen et al. (NEJM 2016) у 1508 жінок із СПКЯ: живонародження після першого перенесення — <b>49,3% проти 42,0%</b>, СГЯ — <b>1,3% проти 7,1%</b>, втрати вагітності — 22,0% проти 32,7%.','Але прееклампсія траплялася частіше — <b>4,4% проти 1,4%</b>. Тож freeze-all — зважене рішення, а не автоматичне.'],
+ next:'Що відбувається з ооцитами між пункцією і перенесенням.',cite:'Chen et al., N Engl J Med 2016;375:523–533',
+ h:{fsh:30,lh:20,e2:40,andro:66,ins:60,amh:88},why:[],
+ go(){$$('#chBars .bar i').forEach(b=>b.style.width=0);T(400,()=>$$('#chBars .bar i').forEach(b=>b.style.width=(b.dataset.w*(b.dataset.s||1))+'%'));}},
+
+{ch:3,v:'lab',chap:'Розділ III · ембріологічна лабораторія',title:'Від пункції до бластоцисти',hideH:1,
+ prose:['Ооцити отримують <b>трансвагінальною пункцією фолікулів</b> під УЗД-контролем. Через 16–18 годин після запліднення оцінюють зиготу: два пронуклеуси (2PN) підтверджують нормальне запліднення.','На 5–6 добу формується <b>бластоциста</b> — з внутрішньою клітинною масою (майбутній ембріон) і трофектодермою (майбутня плацента). При freeze-all бластоцисти <b>вітрифікують</b> — надшвидко заморожують у рідкому азоті.','Для пацієнток з дуже високим ризиком СГЯ є альтернатива — <b>IVM</b>, дозрівання ооцитів in vitro без стимуляції: СГЯ немає, але кумулятивне живонародження нижче.'],
+ next:'Розділ IV: перенесення і вагітність.',cite:'Teede et al., 2023 · рек. 5.7.6',
+ go(){$$('.micro').forEach(m=>m.classList.remove('on'));$$('.micro').forEach((m,i)=>T(600+i*900,()=>m.classList.add('on')));
+  T(400,()=>callout(130,150,200,40,'Пункційна голка у фолікулі',C.e2));T(3200,()=>callout(700,150,700,40,'Рідкий азот, −196 °C',C.ice));}},
+
+{ch:4,v:'transfer',chap:'Розділ IV · вагітність',title:'Один ембріон — і вагітність високого ризику',hideH:1,
+ prose:['Переносять <b>один ембріон</b>: так знижується ризик багатоплідної вагітності, яка сама по собі є ускладненням.','Олена вагітна — але при СПКЯ це вагітність високого ризику. Ті самі механізми, що порушували овуляцію, — інсулінорезистентність, ожиріння, гіперандрогенія — підвищують ризик <b>гестаційного діабету, гіпертензивних розладів і прееклампсії</b>, передчасних пологів, затримки росту плода, викидня та кесаревого розтину.','Важливо, що сама ДРТ не додає ризику понад той, що зумовлений СПКЯ. Метформін під час вагітності не запобігає гестаційному діабету чи прееклампсії, тому ключові — <b>ранній скринінг і моніторинг</b>.'],
+ next:'Підсумуємо.',cite:'Teede et al., 2023 · рек. 4.10–4.11, 5.7.0.2',
+ go(){variant('transfer','t');$$('.risk').forEach(r=>r.classList.remove('on'));
+  T(500,()=>callout(...[.51*540,110+.285*360],330,60,'Катетер: один ембріон',C.e2));
+  T(2600,()=>{variant('transfer','i');clearLabels();callout(...[.5*540,110+.2*360],330,60,'Імплантація',C.e2);});
+  $$('.risk').forEach((r,i)=>T(3400+i*300,()=>r.classList.add('on')));}},
+
+{ch:4,v:'chain',chap:'Висновок',title:'Одне коло — різні точки розриву',
+ prose:['СПКЯ — це самопідтримуваний цикл, у якому гіпоталамус, гіпофіз, яєчник, жирова тканина і печінка посилюють одне одного. Тому лікування безпліддя будується послідовно: спершу послаблюємо метаболічну ланку (маса тіла, метформін), потім підвищуємо ФСГ (летрозол; кломіфен як альтернатива), далі керуємо ФСГ ззовні або зменшуємо джерело андрогенів (гонадотропіни, дрилінг).','ЕКЗ — третя лінія, і при СПКЯ її безпека визначається тим, чи розірвемо ми ланцюг СГЯ: антагоніст, тригер агоністом, freeze-all, перенесення одного ембріона.','Де доказів поки мало: інозитол залишається експериментальним, а препарати для зниження ваги з репродуктивною метою — предмет досліджень.'],
+ cite:'Teede et al., 2023 · алгоритм 2; рек. 5.8–5.9',hideH:1,
+ go(){chainHot(['A','B','C','D','E','Fn','G','Hh'],['AB','BC','CD','DE','EFn','FnA','GC','GHh','HhC']);chainTx([]);T(400,()=>chainTx(['tG','tB','tC','tE']));}},
+
+{ch:4,v:'src',chap:'Дякую за увагу',title:'Запитання?',big:1,hideH:1,prose:['Ключові джерела — на сцені ліворуч.'],go(){}},
+];
+
+/* ---------- clinical case calendar ---------- */
+function drawCal(){const svg=$('#calSvg');const NS='http://www.w3.org/2000/svg';svg.innerHTML='';
+  const X=d=>150+d*(720/365);const el=(t,a)=>{const e=document.createElementNS(NS,t);for(const k in a)e.setAttribute(k,a[k]);svg.appendChild(e);return e;};
+  const M=['січ','лют','бер','кві','тра','чер','лип','сер','вер','жов','лис','гру'];
+  M.forEach((m,i)=>{const x=X(i*30.4);el('line',{x1:x,y1:20,x2:x,y2:205,stroke:'#2C2938'});const t=el('text',{x:x+4,y:228,fill:'#6F6A7E','font-size':13,'font-family':'Source Sans 3, sans-serif'});t.textContent=m;});
+  const row=(y,label,sub)=>{const t=el('text',{x:20,y:y-2,fill:'#EDEAF2','font-size':16,'font-weight':700,'font-family':'Source Sans 3, sans-serif'});t.textContent=label;const s2=el('text',{x:20,y:y+18,fill:'#A39DB1','font-size':13.5,'font-family':'Source Sans 3, sans-serif'});s2.textContent=sub;el('line',{x1:150,y1:y,x2:870,y2:y,stroke:'#3A3550','stroke-width':2});};
+  row(70,'Норма','цикл ~28 днів');row(160,'Олена','цикл 40–60 днів');
+  const items=[];
+  for(let d=0;d<365;d+=28){items.push(['m',X(d),70]);if(d+14<365)items.push(['o',X(d+14),70]);}
+  [0,52,97,155,199,258,310,358].forEach((d,i,a)=>{items.push(['m',X(d),160]);if(i<a.length-1)items.push(['q',X((d+a[i+1])/2),160]);});
+  items.sort((a,b)=>a[1]-b[1]);
+  items.forEach(([k,x,y],i)=>{let e;if(k==='m')e=el('circle',{cx:x,cy:y,r:9,fill:'#D9485F'});else if(k==='o')e=el('path',{d:`M${x} ${y-8} L${x+7} ${y} L${x} ${y+8} L${x-7} ${y}Z`,fill:'#E9B84F'});
+    else{e=el('text',{x:x-5,y:y+6,fill:'#6F6A7E','font-size':18,'font-weight':700,'font-family':'Source Sans 3, sans-serif'});e.textContent='?';}
+    e.setAttribute('class','drop');T(300+i*55,()=>e.classList.add('on'));});
+  T(300+items.length*55,()=>{const a=el('text',{x:878,y:76,fill:'#EDEAF2','font-size':15,'font-weight':700,'font-family':'Source Sans 3, sans-serif','text-anchor':'end'});a.textContent='';
+    const t1=el('text',{x:150,y:110,fill:'#A39DB1','font-size':14,'font-family':'Source Sans 3, sans-serif'});t1.textContent='13 менструацій і 12–13 овуляцій на рік';
+    const t2=el('text',{x:150,y:200,fill:'#E07A8F','font-size':14,'font-weight':700,'font-family':'Source Sans 3, sans-serif'});t2.textContent='лише 8 менструацій на рік; чи була овуляція — невідомо';});}
+S[1].go=drawCal;
+
+/* ---------- right column layouts ---------- */
+function renderRC(tx){const r=$('#rc');let h='';
+  const rec=tx.rec?`<div class="r-rec"><b>${tx.rec[0]}</b><span>${tx.rec[1]}</span></div>`:'';
+  const foot=tx.foot?`<div class="r-foot">${tx.foot}</div>`:'';
+  switch(tx.k){
+   case'lead':h=`<div class="r-lead">${tx.lead}</div><div class="r-p">${tx.p}</div>${tx.q?`<div class="r-q">${tx.q}</div>`:''}`;break;
+   case'steps':h=`<div class="r-steps">${tx.steps.map(([a,b],i)=>`<div class="st"><div class="nm">${i+1}</div><div><h5>${a}</h5><p>${b}</p></div></div>`).join('')}</div>${foot}${rec}`;break;
+   case'compare':h=`<table class="r-tab"><tr><th></th><th class="c1">${tx.cols[0]}</th><th class="c2">${tx.cols[1]}</th></tr>${tx.rows.map(r=>`<tr><td>${r[0]}</td><td>${r[1]}</td><td>${r[2]}</td></tr>`).join('')}</table>${foot}${rec}`;break;
+   case'table':h=`<table class="r-tab"><tr>${tx.head.map((c,i)=>`<th class="${i===1?'c1':i===2?'c2':''}">${c}</th>`).join('')}</tr>${tx.rows.map(r=>`<tr>${r.map(c=>`<td>${c}</td>`).join('')}</tr>`).join('')}</table>${tx.p?`<div class="r-p">${tx.p}</div>`:''}${rec}`;break;
+   case'flow':{const cs=['var(--lh)','var(--accent)','var(--andro)','var(--fsh)'];h=`<div class="r-flow">${tx.flow.map(([a,b],i)=>(i?'<div class="fa">↓</div>':'')+`<div class="fn" style="--fc:${cs[i%4]}"><b>${a}</b><span>${b}</span></div>`).join('')}</div>${foot}`;break;}
+   case'figure':h=`<div class="r-fig"><div class="big">${tx.big}</div><div class="cap">${tx.cap}</div></div>${tx.chain?`<div class="r-chain">${tx.chain.map((c,i)=>(i?'<i>→</i>':'')+`<span>${c}</span>`).join('')}</div>`:''}${tx.p?`<div class="r-p">${tx.p}</div>`:''}${foot}${rec}`;break;
+   case'paradox':h=`<div class="r-lead">${tx.lead}</div><div class="r-two"><div style="--tc:var(--warn)"><h5>${tx.a[0]}</h5><em>${tx.a[1]}</em><p>${tx.a[2]}</p></div><div style="--tc:var(--ok)"><h5>${tx.b[0]}</h5><em>${tx.b[1]}</em><p>${tx.b[2]}</p></div></div>${foot}`;break;
+   case'effects':h=`<div class="r-two"><div style="--tc:var(--accent)"><h5>${tx.a[0]}</h5><p>${tx.a[1]}</p></div><div style="--tc:var(--ice)"><h5>${tx.b[0]}</h5><p>${tx.b[1]}</p></div></div><div class="r-lead">${tx.lead}</div><div class="r-p">${tx.p}</div>`;break;
+   case'proscons':h=`<div class="r-lead" style="font-size:21px">${tx.lead}</div><div class="r-two"><div style="--tc:var(--ok);--mk:'+'"><h5>Переваги</h5><ul>${tx.pros.map(x=>`<li>${x}</li>`).join('')}</ul></div><div style="--tc:var(--warn);--mk:'–'"><h5>Ризики</h5><ul>${tx.cons.map(x=>`<li>${x}</li>`).join('')}</ul></div></div>`;break;
+   case'profile':h=`<dl class="r-prof">${tx.rows.map(([a,b])=>`<div><dt>${a}</dt><dd>${b}</dd></div>`).join('')}</dl>${tx.p?`<div class="r-p">${tx.p}</div>`:''}`;break;
+   case'timeline':h=`<div class="r-chain">${tx.flow.map((c,i)=>(i?'<i>→</i>':'')+`<span>${c}</span>`).join('')}</div><div class="r-two"><div style="--tc:var(--e2)"><h5>${tx.a[0]}</h5><p>${tx.a[1]}</p></div><div style="--tc:var(--warn)"><h5>${tx.b[0]}</h5><p>${tx.b[1]}</p></div></div><div class="r-p">${tx.p}</div>`;break;
+   case'stats':h=`<div class="r-stats">${tx.stats.map(([a,b,c,bad])=>`<div class="${bad?'bad':''}"><b>${a}</b><i>${b}</i><span>${c}</span></div>`).join('')}</div><div class="r-p">${tx.p}</div>`;break;
+  }
+  r.classList.add('swap');setTimeout(()=>{r.innerHTML=h;r.classList.remove('swap');[...r.children].forEach((c,i)=>T(120+i*380,()=>c.classList.add('on')));},200);}
+
+/* ---------- animated vicious circle ---------- */
+const CN={A:[500,62,'Імпульси ГнРГ частішають','zoom_gnrh_neurons','50% 20%'],B:[850,220,'ЛГ ↑ · ФСГ відносно ↓','zoom_gonadotroph','40% 40%'],C:[850,478,'Тека: андрогени ↑','zoom_theca_overdrive','32% 50%'],
+  D:[500,620,'Фолікули зупинені на 2–9 мм · АМГ ↑','follicle_antral_small','50% 50%'],E:[150,478,'Немає домінантного фолікула → ановуляція','follicle_atretic','50% 50%'],F:[150,220,'Немає прогестерону','corpus_luteum','50% 50%'],
+  G:[450,290,'Інсулінорезистентність → інсулін ↑','zoom_insulin_receptor','45% 30%','sr'],H:[480,470,'Печінка: ГЗСГ ↓ → вільний тестостерон ↑','zoom_liver_hepatocyte','72% 52%','sl']};
+const WIN={A:['Прогестерон сповільнює імпульси ГнРГ','zoom_gnrh_neurons'],D:['ФСГ долає поріг → росте один фолікул','follicle_graafian'],E:['Домінантний фолікул → овуляція','follicle_ovulation'],F:['Жовте тіло: прогестерон є','corpus_luteum']};
+const CE={AB:['A','B',C.lh],BC:['B','C',C.lh],CD:['C','D',C.andro],DE:['D','E',C.amh],EF:['E','F','#8A84A0'],FA:['F','A','#8A84A0',1],GC:['G','C',C.ins],GH:['G','H',C.ins],HC:['H','C',C.andro,1]};
+const LOOP=['AB','BC','CD','DE','EF','FA'];
+const MK={G:[450,196,'Маса тіла · метформін',C.ok,'tablets'],D1:[722,705,'Летрозол · кломіфен',C.fsh,'tablets'],D2:[262,690,'Гонадотропіни',C.fsh,'fsh_pen'],C:[900,640,'Лапароскопічний дрилінг',C.andro,'laparoscope_needle']};
+const cwPaths={};
+(function buildCircle(){const NS='http://www.w3.org/2000/svg';const defs=$('#cw defs');
+  const mk=col=>{const id='m'+col.replace(/[^a-z0-9]/gi,'');if(!document.getElementById(id)){const m=document.createElementNS(NS,'marker');m.id=id;m.setAttribute('viewBox','0 0 10 10');m.setAttribute('refX','8');m.setAttribute('refY','5');m.setAttribute('markerWidth','6');m.setAttribute('markerHeight','6');m.setAttribute('orient','auto');m.innerHTML=`<path d="M0 0 L10 5 L0 10z" fill="${col}"/>`;defs.appendChild(m);}return id;};
+  const clip=(c,t)=>{const dx=t[0]-c[0],dy=t[1]-c[1],l=Math.hypot(dx,dy)||1;return[c[0]+dx/l*70,c[1]+dy/l*70];};
+  Object.entries(CE).forEach(([id,[a,b,col,dash]])=>{const A=CN[a],B=CN[b];const mid=[(A[0]+B[0])/2,(A[1]+B[1])/2];let ctl=mid;
+    if(LOOP.includes(id)){const v=[mid[0]-500,mid[1]-345],l=Math.hypot(...v);ctl=[mid[0]+v[0]/l*70,mid[1]+v[1]/l*70];}
+    const p0=clip([A[0],A[1]],ctl),p1=clip([B[0],B[1]],ctl);
+    const p=document.createElementNS(NS,'path');p.setAttribute('d',`M${p0[0]} ${p0[1]} Q${ctl[0]} ${ctl[1]} ${p1[0]} ${p1[1]}`);p.setAttribute('class','ce2');p.setAttribute('stroke',col);p.dataset.col=col;
+    p.setAttribute('marker-end',`url(#${mk(col)})`);$('#cwE').appendChild(p);const L=p.getTotalLength();p.style.strokeDasharray=dash?'7 7':L;p.style.strokeDashoffset=dash?0:L;p.style.opacity=0;cwPaths[id]={p,L,col,dash};
+    const m=p.getPointAtLength(L/2);const g=document.createElementNS(NS,'g');g.setAttribute('class','cbrk');g.id='br-'+id;g.setAttribute('transform',`translate(${m.x} ${m.y})`);
+    g.innerHTML=`<circle r="15" fill="#14131C" stroke="${C.warn}" stroke-width="3"/><path d="M-7 -7 L7 7 M7 -7 L-7 7" stroke="${C.warn}" stroke-width="3.5" stroke-linecap="round"/>`;$('#cwB').appendChild(g);});
+  Object.entries(CN).forEach(([k,[x,y,t,img,pos,side]])=>{const d=document.createElement('div');d.className='cnode'+(side?' '+side:'');d.id='cn-'+k;d.style.left=x+'px';d.style.top=y+'px';
+    d.innerHTML=`<img src="img/${img}.webp" alt="" style="object-position:${pos};${k==='F'?'filter:grayscale(1) brightness(.6)':''}"><span>${t}</span>`;$('#cwN').appendChild(d);});
+  Object.entries(MK).forEach(([k,[x,y,t,col,img]])=>{const d=document.createElement('div');d.className='cmark';d.id='mk-'+k;d.style.left=x+'px';d.style.top=y+'px';d.style.setProperty('--mc',col);
+    d.innerHTML=`<img src="img/${img}.webp" alt=""><b>${t}</b>`;$('#cwM').appendChild(d);});
+})();
+const cwx=$('#cwfx').getContext('2d');cwx.scale(2,2);let cwParts=[],cwFlow=[],cwOn=false;
+function cwFrame(){if(!cwOn)return;cwx.clearRect(0,0,1000,732);
+  cwFlow.forEach(f=>{f.acc+=1/60*f.rate;while(f.acc>=1){f.acc-=1;cwParts.push({f,t:0});}});
+  cwx.globalCompositeOperation='lighter';
+  for(let i=cwParts.length-1;i>=0;i--){const q=cwParts[i];q.t+=1/60/q.f.dur;if(q.t>=1){cwParts.splice(i,1);continue;}const pt=q.f.e.p.getPointAtLength(q.t*q.f.e.L);
+    cwx.globalAlpha=Math.min(1,q.t*6,(1-q.t)*6);const s=7;cwx.drawImage(sprite(q.f.col),pt.x-s,pt.y-s,s*2,s*2);}
+  cwx.globalAlpha=1;cwx.globalCompositeOperation='source-over';requestAnimationFrame(cwFrame);}
+function cwSet(st){const{nodes,edges,hot,marks,dimMarks,brk,win,mid,fast}=st;
+  Object.keys(CN).forEach(k=>{const n=$('#cn-'+k);n.classList.toggle('on',nodes.includes(k));n.classList.toggle('hot',hot.includes(k));
+    const w=win&&WIN[k];n.classList.toggle('win',!!w);const im=n.querySelector('img'),sp=n.querySelector('span');
+    if(w){sp.textContent=w[0];im.src=`img/${w[1]}.webp`;im.style.filter='';}else{sp.textContent=CN[k][2];im.src=`img/${CN[k][3]}.webp`;im.style.filter=k==='F'?'grayscale(1) brightness(.6)':'';}});
+  Object.entries(cwPaths).forEach(([id,e])=>{const on=edges.includes(id);e.p.style.opacity=on?1:0;if(!e.dash)e.p.style.strokeDashoffset=on?0:e.L;
+    const g=win&&['CD','DE','EF','FA'].includes(id);const col=g?C.ok:e.col;e.p.setAttribute('stroke',col);e.cur=col;});
+  Object.keys(MK).forEach(k=>{const m=$('#mk-'+k);m.classList.toggle('on',marks.includes(k));m.classList.toggle('dim',dimMarks.includes(k)&&!marks.includes(k));if(!marks.includes(k)&&!dimMarks.includes(k))m.classList.remove('dim');});
+  $$('.cbrk').forEach(b=>b.classList.toggle('on',brk.includes(b.id.slice(3))));
+  $('#cmid').classList.toggle('on',!!mid);
+  cwFlow=edges.filter(id=>!brk.includes(id)).map(id=>({e:cwPaths[id],col:cwPaths[id].cur,rate:(fast&&LOOP.includes(id))?4:2.2,dur:1.6,acc:0}));}
+const WIDE={10:'build',11:'treat',29:'concl'};let sub=0;
+function circleStage(mode,i){const st=CIRCLE[mode],cur=st[i];const all=Object.keys(CN),allE=Object.keys(CE);let o;
+  if(mode==='build'){const nodes=[],edges=[];st.slice(0,i+1).forEach(x=>{nodes.push(...x.n);edges.push(...x.e);});
+    o={nodes,edges,hot:cur.n,marks:[],dimMarks:[],brk:[],win:0,mid:cur.loop&&!nodes.includes('G'),fast:cur.loop};}
+  else{const marks=cur.x||[];const prev=[];st.slice(0,i).forEach(x=>prev.push(...(x.x||[])));
+    o={nodes:all,edges:allE,hot:cur.win?[]:marks.map(m=>m[0]==='D'?'D':m),marks:cur.win?[]:marks,dimMarks:cur.win?Object.keys(MK).filter(k=>prev.includes(k)||mode==='concl'):prev,brk:cur.win?[]:(cur.brk||[]),win:cur.win,mid:0,fast:cur.loop||cur.win};
+    if(cur.win&&mode==='concl')o.dimMarks=Object.keys(MK);}
+  cwSet(o);
+  $('#cpDots').innerHTML=st.map((_,j)=>`<i class="${j<=i?'on':''}"></i>`).join('');
+  $('#cpN').textContent=mode==='build'?`Ланка ${i+1} з ${st.length}`:mode==='treat'?`Крок ${i+1} з ${st.length}`:`${i+1} з ${st.length}`;
+  const t=$('#cpT'),p=$('#cpP');t.classList.add('cp-fade');p.classList.add('cp-fade');$('#cpAb').innerHTML=abbrList(cur.t+' '+cur.p+' '+[...document.querySelectorAll('.cnode.on span')].map(x=>x.textContent).join(' '),6);setTimeout(()=>{t.textContent=cur.t;p.textContent=cur.p;t.classList.remove('cp-fade');p.classList.remove('cp-fade');},250);}
+
+/* ---------- abbreviations ---------- */
+const AB=[['СПКЯ','синдром полікістозних яєчників'],['ГнРГ','гонадотропін-рилізинг-гормон'],['ЛГ','лютеїнізуючий гормон'],['ФСГ','фолікулостимулюючий гормон'],['Е2','естрадіол'],['АМГ','антимюлерів гормон'],
+ ['ГЗСГ','глобулін, що зв’язує статеві гормони'],['ПКМЯ','полікістозна морфологія яєчників'],['ТТГ','тиреотропний гормон'],['ВГКН','вроджена гіперплазія кори надниркових залоз'],['ІМТ','індекс маси тіла'],['АТ','артеріальний тиск'],
+ ['GLUT4','транспортер глюкози 4-го типу'],['CYP19A1','ароматаза (цитохром P450 19A1)'],['SERM','селективний модулятор естрогенових рецепторів'],['T½','період напіввиведення'],['МО','міжнародні одиниці'],
+ ['ХГЛ','хоріонічний гонадотропін людини'],['VEGF','фактор росту ендотелію судин'],['СГЯ','синдром гіперстимуляції яєчників'],['ЕКЗ','екстракорпоральне запліднення'],['ІКСІ','інтрацитоплазматична ін’єкція сперматозоїда'],
+ ['ДРТ','допоміжні репродуктивні технології'],['IVM','дозрівання ооцитів in vitro'],['eSET','перенесення одного ембріона'],['2PN','два пронуклеуси'],['ГД','гестаційний діабет'],['RCT','рандомізоване контрольоване дослідження'],['PPCOS II','назва рандомізованого дослідження']];
+function abbrList(text,max=7){const out=[];for(const[a,f]of AB){const re=new RegExp('(^|[^А-ЯІЇЄҐA-Za-zа-яіїєґ0-9])'+a.replace(/[.*+?^${}()|[\]\\]/g,'\\$&')+'(?![А-ЯІЇЄҐA-Za-zа-яіїєґ])');if(re.test(text))out.push(`<b>${a}</b> — ${f}`);if(out.length>=max)break;}return out.length?'Скорочення: '+out.join('; '):'';}
+
+/* ---------- render ---------- */
+const SEQ=[];S.forEach((st,i)=>{if(SECTIONS[i])SEQ.push({type:'sec',d:SECTIONS[i]});SEQ.push({type:i===0?'title':i===S.length-1?'end':'slide',i});});
+let k=0;
+function render(){clearT();clearFx();clearLabels();aglow(0);$('#usDomBox').style.opacity=0;$('#usDomSrc').style.opacity=0;
+  const it=SEQ[k];$('#count').textContent=`${k+1} / ${SEQ.length}`;
+  const full=$('#full');$$('.fs').forEach(f=>f.classList.remove('on'));
+  const wideMode=it.type==='slide'&&WIDE[it.i];
+  $('#wide').classList.toggle('on',!!wideMode);['#scene','#hs','.col'].forEach(q=>$(q).style.visibility=wideMode?'hidden':'');
+  if(!wideMode){cwOn=false;cwParts=[];}
+  if(it.type!=='slide'){full.classList.add('on');$('#fsrc').textContent='';
+    if(it.type==='title')$('#f-title').classList.add('on');
+    else if(it.type==='end')$('#f-end').classList.add('on');
+    else{const[n,t,sb,list]=it.d;$('#sNum').textContent=n;$('#sTitle').textContent=t;$('#sSub').textContent=sb;$('#sList').innerHTML=list.map((x,j)=>`<div><span>${j+1}</span>${x}</div>`).join('');$('#f-sec').classList.add('on');}
+    return;}
+  full.classList.remove('on');
+  const s=S[it.i],tx=TEXT[it.i];
+  $('#hsec').textContent=s.chap;$('#htitle').textContent=tx.t;$('#fsrc').textContent=s.cite?('Джерело: '+s.cite):'';
+  if(wideMode){if(!cwOn){cwOn=true;requestAnimationFrame(cwFrame);}circleStage(wideMode,sub);return;}
+  if(s.h)setH(s.h);
+  showView(s.v,s.mode,s.focus);
+  $('#hs').classList.toggle('off',!!s.hideH);$('#scene').classList.toggle('tall',!!s.hideH);why(s.hideH?[]:s.why);
+  renderRC(tx);$('#abbr').innerHTML=abbrList(JSON.stringify(tx)+' '+JSON.stringify(s.why||[])+' '+(s.chap||''));
+  T(s.v==='ov'?0:350,()=>s.go());}
+function go(d){const it=SEQ[k];const wm=it.type==='slide'&&WIDE[it.i];
+  if(wm){const n=CIRCLE[wm].length;if(d>0&&sub<n-1){sub++;circleStage(wm,sub);return;}if(d<0&&sub>0){sub--;circleStage(wm,sub);return;}}
+  const nk=Math.max(0,Math.min(SEQ.length-1,k+d));if(nk!==k){k=nk;const ni=SEQ[k];sub=(d<0&&ni.type==='slide'&&WIDE[ni.i])?CIRCLE[WIDE[ni.i]].length-1:0;render();}}
+$('#next').onclick=()=>go(1);$('#prev').onclick=()=>go(-1);
+$('#fs').onclick=()=>{try{const p=document.fullscreenElement?document.exitFullscreen():document.documentElement.requestFullscreen();p&&p.catch&&p.catch(()=>{});}catch(e){}};
+addEventListener('keydown',e=>{if(['ArrowRight','PageDown',' ','Enter'].includes(e.key)){e.preventDefault();go(1);}else if(['ArrowLeft','PageUp','Backspace'].includes(e.key)){e.preventDefault();go(-1);}
+  else if(e.key==='Home'){k=0;sub=0;render();}else if(e.key==='End'){k=SEQ.length-1;render();}else if('fFаА'.includes(e.key))$('#fs').click();else if('rRкК'.includes(e.key)){sub=0;render();}});
+setH(HP);render();
+})();
+
+</script>
+
+</body>
+</html>
